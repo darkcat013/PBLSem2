@@ -11,9 +11,9 @@ namespace App.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
-        protected readonly TestDbContext _testDbContext;
+        protected readonly ConstruxDbContext _testDbContext;
 
-        public GenericRepository(TestDbContext testDbContext)
+        public GenericRepository(ConstruxDbContext testDbContext)
         {
             _testDbContext = testDbContext;
         }

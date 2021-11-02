@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace App.Domain.Entities
 {
-    public class Test : BaseEntity
+    public class Category : BaseEntity
     {
         public string Name { get; set; }
-        public DateTime DateCreated { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
     }
 }
