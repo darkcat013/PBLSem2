@@ -1,5 +1,6 @@
 ﻿using Construx.App.Domain.Entities;
 using Construx.App.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace Construx.App.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User,IdentityRole<int>,int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -34,7 +35,12 @@ namespace Construx.App.Data
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
             builder.Entity<User>().ToTable("AspNetUsers");
-
+            builder.Entity<UserClaim>().ToTable("AspNetUserClaims");
+            builder.Entity<UserLogin>().ToTable("AspNetUserLogins");
+            builder.Entity<UserToken>().ToTable("AspNetUserTokens");
+            builder.Entity<Role>().ToTable("AspNetRoles");
+            builder.Entity<RoleClaim>().ToTable("AspNetRoleClaims");
+            builder.Entity<UserRole>().ToTable("AspNetUserRoles");
         }
     }
 }

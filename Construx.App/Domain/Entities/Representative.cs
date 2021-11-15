@@ -8,9 +8,9 @@ namespace Construx.App.Domain.Entities
 {
     public class Representative : BaseEntity
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public virtual User User { get; set; }
-        public string CompanyId { get; set; }
+        public int CompanyId { get; set; }
         public virtual Company Company { get; set; }
         public string IDNP { get; set; }
         public string Phone { get; set; }

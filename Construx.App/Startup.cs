@@ -33,7 +33,7 @@ namespace Construx.App
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddIdentityCore<User>(options =>
+            services.AddIdentity<User, Role>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequiredLength = 8;
@@ -41,10 +41,11 @@ namespace Construx.App
                 options.Password.RequireUppercase = false;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
