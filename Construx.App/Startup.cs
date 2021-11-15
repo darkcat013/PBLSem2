@@ -35,7 +35,6 @@ namespace Construx.App
 
             services.AddIdentity<User, Role>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;

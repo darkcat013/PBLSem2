@@ -1,5 +1,6 @@
 ﻿using System;
 using Construx.App.Data;
+using Construx.App.Domain.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
