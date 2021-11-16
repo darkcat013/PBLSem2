@@ -1,3 +1,4 @@
+using Construx.App.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +15,7 @@ namespace Construx.App
         public static async Task Main(string[] args)
         {
             IHost host = CreateHostBuilder(args).Build();
-
+            await host.SeedData();
             await host.RunAsync();
         }
 

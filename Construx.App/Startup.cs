@@ -33,16 +33,17 @@ namespace Construx.App
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddIdentity<User, Role>(options =>
+            services.AddDefaultIdentity<User>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+            
 
             services.AddControllersWithViews();
-            services.AddRazorPages();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
