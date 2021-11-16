@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Construx.App.Constants;
 
 namespace Construx.App.Areas.Identity.Pages.Account
 {
@@ -62,6 +63,9 @@ namespace Construx.App.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Display(Name = "Company representative")]
+            public bool Representative { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -81,6 +85,16 @@ namespace Construx.App.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    if(Input.Representative)
+                    {
+                        await _userManager.AddToRoleAsync(user, UserRoles.Representative);
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect("~/Companies/Create");
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, UserRoles.User);
+                    } 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }

@@ -12,7 +12,8 @@ namespace Construx.App.Domain.Entities
         public string Phone { get; set; }
         public string Email { get; set; }
         public string IDNO { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; }
+        public bool IsApproved { get; set; }
         public string Description { get; set; }
         public virtual Representative Representative { get; set; }
     }

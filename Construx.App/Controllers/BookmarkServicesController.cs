@@ -10,22 +10,23 @@ using Construx.App.Domain.Entities;
 
 namespace Construx.App.Controllers
 {
-    public class CategoriesController : BaseController
+    public class BookmarkServicesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public BookmarkServicesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: BookmarkServices
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var applicationDbContext = _context.BookmarkServices.Include(b => b.Service).Include(b => b.User);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: BookmarkServices/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,45 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var bookmarkService = await _context.BookmarkServices
+                .Include(b => b.Service)
+                .Include(b => b.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (bookmarkService == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(bookmarkService);
         }
 
-        // GET: Categories/Create
+        // GET: BookmarkServices/Create
         public IActionResult Create()
         {
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: BookmarkServices/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Create([Bind("ServiceId,UserId,Note,DateCreated,Id")] BookmarkService bookmarkService)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                _context.Add(bookmarkService);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id", bookmarkService.ServiceId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkService.UserId);
+            return View(bookmarkService);
         }
 
-        // GET: Categories/Edit/5
+        // GET: BookmarkServices/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,24 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var bookmarkService = await _context.BookmarkServices.FindAsync(id);
+            if (bookmarkService == null)
             {
                 return NotFound();
             }
-            return View(category);
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id", bookmarkService.ServiceId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkService.UserId);
+            return View(bookmarkService);
         }
 
-        // POST: Categories/Edit/5
+        // POST: BookmarkServices/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("ServiceId,UserId,Note,DateCreated,Id")] BookmarkService bookmarkService)
         {
-            if (id != category.Id)
+            if (id != bookmarkService.Id)
             {
                 return NotFound();
             }
@@ -97,12 +106,12 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(bookmarkService);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!BookmarkServiceExists(bookmarkService.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +122,12 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id", bookmarkService.ServiceId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkService.UserId);
+            return View(bookmarkService);
         }
 
-        // GET: Categories/Delete/5
+        // GET: BookmarkServices/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +135,32 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var bookmarkService = await _context.BookmarkServices
+                .Include(b => b.Service)
+                .Include(b => b.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (bookmarkService == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(bookmarkService);
         }
 
-        // POST: Categories/Delete/5
+        // POST: BookmarkServices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
+            var bookmarkService = await _context.BookmarkServices.FindAsync(id);
+            _context.BookmarkServices.Remove(bookmarkService);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool BookmarkServiceExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.BookmarkServices.Any(e => e.Id == id);
         }
     }
 }

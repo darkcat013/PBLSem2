@@ -10,22 +10,23 @@ using Construx.App.Domain.Entities;
 
 namespace Construx.App.Controllers
 {
-    public class CategoriesController : BaseController
+    public class ServicesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public ServicesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Services
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var applicationDbContext = _context.Services.Include(s => s.Category).Include(s => s.Company);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Services/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,45 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var service = await _context.Services
+                .Include(s => s.Category)
+                .Include(s => s.Company)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (service == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(service);
         }
 
-        // GET: Categories/Create
+        // GET: Services/Create
         public IActionResult Create()
         {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Services/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Create([Bind("CompanyId,CategoryId,Name,Description,Id")] Service service)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                _context.Add(service);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", service.CategoryId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            return View(service);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Services/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,24 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var service = await _context.Services.FindAsync(id);
+            if (service == null)
             {
                 return NotFound();
             }
-            return View(category);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", service.CategoryId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            return View(service);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Services/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("CompanyId,CategoryId,Name,Description,Id")] Service service)
         {
-            if (id != category.Id)
+            if (id != service.Id)
             {
                 return NotFound();
             }
@@ -97,12 +106,12 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(service);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!ServiceExists(service.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +122,12 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", service.CategoryId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            return View(service);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Services/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +135,32 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var service = await _context.Services
+                .Include(s => s.Category)
+                .Include(s => s.Company)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (service == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(service);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Services/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
+            var service = await _context.Services.FindAsync(id);
+            _context.Services.Remove(service);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool ServiceExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.Services.Any(e => e.Id == id);
         }
     }
 }

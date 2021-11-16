@@ -10,22 +10,22 @@ using Construx.App.Domain.Entities;
 
 namespace Construx.App.Controllers
 {
-    public class CategoriesController : BaseController
+    public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CompaniesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Companies
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _context.Companies.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,40 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var company = await _context.Companies
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (company == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(company);
         }
 
-        // GET: Categories/Create
+        // GET: Companies/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Companies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Create([Bind("Name,Adress,Phone,Email,IDNO,Description,Id")] Company company)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                company.Status = "Under verificaiton";
+                _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(company);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +74,22 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var company = await _context.Companies.FindAsync(id);
+            if (company == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(company);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Companies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,Status,IsApproved,Description,Id")] Company company)
         {
-            if (id != category.Id)
+            if (id != company.Id)
             {
                 return NotFound();
             }
@@ -97,12 +98,12 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(company);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!CompanyExists(company.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +114,10 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(company);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +125,30 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var company = await _context.Companies
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (company == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(company);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Companies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
+            var company = await _context.Companies.FindAsync(id);
+            _context.Companies.Remove(company);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool CompanyExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.Companies.Any(e => e.Id == id);
         }
     }
 }

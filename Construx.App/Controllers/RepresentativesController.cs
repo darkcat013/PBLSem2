@@ -10,22 +10,23 @@ using Construx.App.Domain.Entities;
 
 namespace Construx.App.Controllers
 {
-    public class CategoriesController : BaseController
+    public class RepresentativesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public RepresentativesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Representatives
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var applicationDbContext = _context.Representatives.Include(r => r.Company).Include(r => r.User);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Representatives/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,45 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var representative = await _context.Representatives
+                .Include(r => r.Company)
+                .Include(r => r.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (representative == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(representative);
         }
 
-        // GET: Categories/Create
+        // GET: Representatives/Create
         public IActionResult Create()
         {
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Representatives/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Create([Bind("UserId,CompanyId,IDNP,Phone,JobTitle,Id")] Representative representative)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                _context.Add(representative);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", representative.CompanyId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", representative.UserId);
+            return View(representative);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Representatives/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,24 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var representative = await _context.Representatives.FindAsync(id);
+            if (representative == null)
             {
                 return NotFound();
             }
-            return View(category);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", representative.CompanyId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", representative.UserId);
+            return View(representative);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Representatives/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Id")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,CompanyId,IDNP,Phone,JobTitle,Id")] Representative representative)
         {
-            if (id != category.Id)
+            if (id != representative.Id)
             {
                 return NotFound();
             }
@@ -97,12 +106,12 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(representative);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!RepresentativeExists(representative.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +122,12 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", representative.CompanyId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", representative.UserId);
+            return View(representative);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Representatives/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +135,32 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
+            var representative = await _context.Representatives
+                .Include(r => r.Company)
+                .Include(r => r.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (representative == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(representative);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Representatives/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
+            var representative = await _context.Representatives.FindAsync(id);
+            _context.Representatives.Remove(representative);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool RepresentativeExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.Representatives.Any(e => e.Id == id);
         }
     }
 }

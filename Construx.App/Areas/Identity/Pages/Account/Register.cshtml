@@ -31,6 +31,14 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="Input.Representative">
+                            <input asp-for="Input.Representative" />
+                            @Html.DisplayNameFor(m => m.Input.Representative)
+                        </label>
+                    </div>
+                </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     
