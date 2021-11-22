@@ -10,7 +10,7 @@ namespace Construx.App.Domain.Entities
     {
         public int UserId { get; set; }
         public virtual User User { get; set; }
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         public virtual Company Company { get; set; }
         public string IDNP { get; set; }
         public string Phone { get; set; }

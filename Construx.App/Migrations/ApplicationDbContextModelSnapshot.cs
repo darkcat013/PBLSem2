@@ -109,21 +109,38 @@ namespace Construx.App.Migrations
                     b.Property<string>("IDNO")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
+                    b.Property<int?>("RepresentativeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Entities.CompanyStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("CompanyStatus");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Representative", b =>
@@ -556,6 +573,17 @@ namespace Construx.App.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Construx.App.Domain.Entities.Company", b =>
+                {
+                    b.HasOne("Construx.App.Domain.Entities.CompanyStatus", "Status")
+                        .WithMany("Companies")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
             modelBuilder.Entity("Construx.App.Domain.Entities.Representative", b =>
                 {
                     b.HasOne("Construx.App.Domain.Entities.Company", "Company")
@@ -672,6 +700,11 @@ namespace Construx.App.Migrations
             modelBuilder.Entity("Construx.App.Domain.Entities.Company", b =>
                 {
                     b.Navigation("Representative");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Entities.CompanyStatus", b =>
+                {
+                    b.Navigation("Companies");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Service", b =>

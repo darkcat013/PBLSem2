@@ -22,7 +22,8 @@ namespace Construx.App.Controllers
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Companies.ToListAsync());
+            var applicationDbContext = _context.Companies.Include(c => c.Status);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Companies/Details/5
@@ -34,6 +35,7 @@ namespace Construx.App.Controllers
             }
 
             var company = await _context.Companies
+                .Include(c => c.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
@@ -46,6 +48,7 @@ namespace Construx.App.Controllers
         // GET: Companies/Create
         public IActionResult Create()
         {
+            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id");
             return View();
         }
 
@@ -54,15 +57,15 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Adress,Phone,Email,IDNO,Description,Id")] Company company)
+        public async Task<IActionResult> Create([Bind("Name,Adress,Phone,Email,IDNO,StatusId,Description,Id")] Company company)
         {
             if (ModelState.IsValid)
             {
-                company.Status = "Under verificaiton";
                 _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id", company.StatusId);
             return View(company);
         }
 
@@ -79,6 +82,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
+            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id", company.StatusId);
             return View(company);
         }
 
@@ -87,7 +91,7 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,Status,IsApproved,Description,Id")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,StatusId,Description,Id")] Company company)
         {
             if (id != company.Id)
             {
@@ -114,6 +118,7 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id", company.StatusId);
             return View(company);
         }
 
@@ -126,6 +131,7 @@ namespace Construx.App.Controllers
             }
 
             var company = await _context.Companies
+                .Include(c => c.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
