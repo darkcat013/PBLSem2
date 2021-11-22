@@ -9407,24 +9407,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\viorel.noroc\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Vlada\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\viorel.noroc\\source\\repos\\PBLSem2\\Construx.App\\Construx.App.csproj",
+      "projectUniqueName": "C:\\Users\\Vlada\\Documents\\4-pbl-year2-sem1\\Construx.App\\Construx.App.csproj",
       "projectName": "Construx.App",
-      "projectPath": "C:\\Users\\viorel.noroc\\source\\repos\\PBLSem2\\Construx.App\\Construx.App.csproj",
-      "packagesPath": "C:\\Users\\viorel.noroc\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\viorel.noroc\\source\\repos\\PBLSem2\\Construx.App\\obj\\",
+      "projectPath": "C:\\Users\\Vlada\\Documents\\4-pbl-year2-sem1\\Construx.App\\Construx.App.csproj",
+      "packagesPath": "C:\\Users\\Vlada\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Vlada\\Documents\\4-pbl-year2-sem1\\Construx.App\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\viorel.noroc\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Vlada\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -9501,7 +9496,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
