@@ -156,5 +156,21 @@ namespace Construx.App.Controllers
         {
             return _context.Companies.Any(e => e.Id == id);
         }
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchString)
+        {
+            //so we'll be able to get this string in the view
+            ViewData["GetSearchString"] = searchString;
+
+            var companies = from c in _context.Companies
+                            select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                companies = companies.Where(c => c.Name.Contains(searchString) || c.Description.Contains(searchString));
+            }
+
+            return View(await companies.ToListAsync());
+        }
     }
 }

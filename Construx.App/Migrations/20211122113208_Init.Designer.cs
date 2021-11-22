@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Construx.App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211119115656_Init")]
+    [Migration("20211122113208_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,7 +142,7 @@ namespace Construx.App.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CompanyStatus");
+                    b.ToTable("CompanyStatuses");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Representative", b =>
@@ -152,7 +152,7 @@ namespace Construx.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("IDNP")
@@ -170,7 +170,8 @@ namespace Construx.App.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[CompanyId] IS NOT NULL");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -590,9 +591,7 @@ namespace Construx.App.Migrations
                 {
                     b.HasOne("Construx.App.Domain.Entities.Company", "Company")
                         .WithOne("Representative")
-                        .HasForeignKey("Construx.App.Domain.Entities.Representative", "CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Construx.App.Domain.Entities.Representative", "CompanyId");
 
                     b.HasOne("Construx.App.Domain.Identity.User", "User")
                         .WithOne("Representative")

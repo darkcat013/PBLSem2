@@ -22,6 +22,7 @@ namespace Construx.App.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Representative> Representatives { get; set; }
+        public DbSet<CompanyStatus> CompanyStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

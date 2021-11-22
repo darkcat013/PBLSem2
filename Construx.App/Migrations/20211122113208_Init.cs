@@ -67,7 +67,7 @@ namespace Construx.App.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyStatus",
+                name: "CompanyStatuses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -76,7 +76,7 @@ namespace Construx.App.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanyStatus", x => x.Id);
+                    table.PrimaryKey("PK_CompanyStatuses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,9 +209,9 @@ namespace Construx.App.Migrations
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Companies_CompanyStatus_StatusId",
+                        name: "FK_Companies_CompanyStatuses_StatusId",
                         column: x => x.StatusId,
-                        principalTable: "CompanyStatus",
+                        principalTable: "CompanyStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -251,7 +251,7 @@ namespace Construx.App.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     IDNP = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -270,7 +270,7 @@ namespace Construx.App.Migrations
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -425,7 +425,8 @@ namespace Construx.App.Migrations
                 name: "IX_Representatives_CompanyId",
                 table: "Representatives",
                 column: "CompanyId",
-                unique: true);
+                unique: true,
+                filter: "[CompanyId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Representatives_UserId",
@@ -499,7 +500,7 @@ namespace Construx.App.Migrations
                 name: "Companies");
 
             migrationBuilder.DropTable(
-                name: "CompanyStatus");
+                name: "CompanyStatuses");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Construx.App.Data;
 using Construx.App.Data.Seeds;
+using Construx.App.Domain.Entities;
 using Construx.App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace Construx.App.Extensions
 
                     await RolesSeed.Seed(roleManager);
                     await UsersSeed.Seed(userManager);
+                    await CompanyStatusesSeed.Seed(dbContext);
 
                 }
                 catch (Exception ex)
