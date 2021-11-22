@@ -157,7 +157,7 @@ namespace Construx.App.Controllers
             return _context.Companies.Any(e => e.Id == id);
         }
         [HttpGet]
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, string sortOrder)
         {
             //so we'll be able to get this string in the view
             ViewData["GetSearchString"] = searchString;
@@ -168,6 +168,17 @@ namespace Construx.App.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 companies = companies.Where(c => c.Name.Contains(searchString) || c.Description.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "nameASC":
+                    companies = companies.OrderBy(c => c.Name);
+                    break;
+
+                case "nameDESC":
+                    companies = companies.OrderByDescending(c => c.Name);
+                    break;
             }
 
             return View(await companies.ToListAsync());
