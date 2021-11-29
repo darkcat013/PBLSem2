@@ -22,22 +22,26 @@ namespace Construx.App.Data.Seeds
                         Email = "viorel.noroc013@gmail.com",
                         FirstName = "Viorel",
                         LastName = "Noroc",
-                        DateCreated = new DateTime(2021,9,1)
+                        DateCreated = new DateTime(2021,9,1),
+                        CityId = 14
                     },
                     new User
                     {
                         UserName = "bonehair",
-                        Email = "faraamk@gmail.com"
+                        Email = "faraamk@gmail.com",
+                        CityId = 14
                     },
                     new User
                     {
                         UserName = "user3",
-                        Email = "user3@gmail.com"
+                        Email = "user3@gmail.com",
+                        CityId = 1
                     },
                     new User
                     {
                         UserName = "user4",
-                        Email = "user4@gmail.com"
+                        Email = "user4@gmail.com",
+                        CityId = 2
                     },
                 };
                 await userManager.CreateAsync(users[0], "a12345678");

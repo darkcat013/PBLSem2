@@ -15,5 +15,6 @@ namespace Construx.App.Domain.Entities
         public string IDNP { get; set; }
         public string Phone { get; set; }
         public string JobTitle { get; set; }
+        public bool Status { get; set; }
     }
 }

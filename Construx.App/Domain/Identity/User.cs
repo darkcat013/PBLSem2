@@ -17,5 +17,8 @@ namespace Construx.App.Domain.Identity
         public virtual ICollection<BookmarkCompany> BookmarkCompanies { get; set; }
         public virtual Representative Representative { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<Plan> Plans { get; set; }
+        public int CityId { get; set; }
+        public virtual City City { get; set; }
     }
 }

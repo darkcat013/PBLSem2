@@ -8,7 +8,7 @@ namespace Construx.App.Domain.Entities
 {
     public class Review : BaseEntity
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public virtual User User { get; set; }
         public int ServiceId { get; set; }
         public virtual Service Service { get; set; }

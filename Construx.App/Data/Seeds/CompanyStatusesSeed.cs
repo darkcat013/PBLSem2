@@ -28,12 +28,11 @@ namespace Construx.App.Data.Seeds
                         Name = Statuses.UnderVerification
                     }
                 };
-                await statuses.AddAsync(statusesList[0]);
-                await dbContext.SaveChangesAsync();
-                await statuses.AddAsync(statusesList[1]);
-                await dbContext.SaveChangesAsync();
-                await statuses.AddAsync(statusesList[2]);
-                await dbContext.SaveChangesAsync();
+                foreach (var item in statusesList)
+                {
+                    await statuses.AddAsync(item);
+                    await dbContext.SaveChangesAsync();
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Construx.App.Data.Configurations
                 .WithOne(c => c.Company)
                 .HasForeignKey<Company>(r => r.RepresentativeId);
 
-            }
+        }
     }
 }
 

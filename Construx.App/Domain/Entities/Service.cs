@@ -15,5 +15,6 @@ namespace Construx.App.Domain.Entities
         public string Description { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<BookmarkService> Bookmarks { get; set; }
+        public virtual ICollection<PlanPart> PlanParts { get; set; }
     }
 }

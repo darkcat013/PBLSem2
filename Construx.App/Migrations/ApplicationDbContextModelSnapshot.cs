@@ -26,7 +26,7 @@ namespace Construx.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
@@ -35,7 +35,7 @@ namespace Construx.App.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -60,10 +60,10 @@ namespace Construx.App.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int?>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -90,6 +90,21 @@ namespace Construx.App.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Construx.App.Domain.Entities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
             modelBuilder.Entity("Construx.App.Domain.Entities.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -99,6 +114,9 @@ namespace Construx.App.Migrations
 
                     b.Property<string>("Adress")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -123,6 +141,8 @@ namespace Construx.App.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CityId");
+
                     b.HasIndex("StatusId");
 
                     b.ToTable("Companies");
@@ -143,6 +163,52 @@ namespace Construx.App.Migrations
                     b.ToTable("CompanyStatuses");
                 });
 
+            modelBuilder.Entity("Construx.App.Domain.Entities.Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Plans");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Entities.PlanPart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PartId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PartId");
+
+                    b.ToTable("PlanParts");
+                });
+
             modelBuilder.Entity("Construx.App.Domain.Entities.Representative", b =>
                 {
                     b.Property<int>("Id")
@@ -161,6 +227,9 @@ namespace Construx.App.Migrations
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -193,7 +262,7 @@ namespace Construx.App.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -245,6 +314,9 @@ namespace Construx.App.Migrations
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -300,6 +372,8 @@ namespace Construx.App.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -482,6 +556,21 @@ namespace Construx.App.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<int>");
                 });
 
+            modelBuilder.Entity("PlanPartService", b =>
+                {
+                    b.Property<int>("PlanPartsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlanPartsId", "ServicesId");
+
+                    b.HasIndex("ServicesId");
+
+                    b.ToTable("PlanPartService");
+                });
+
             modelBuilder.Entity("Construx.App.Domain.Identity.Role", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole<int>");
@@ -539,16 +628,12 @@ namespace Construx.App.Migrations
             modelBuilder.Entity("Construx.App.Domain.Entities.BookmarkCompany", b =>
                 {
                     b.HasOne("Construx.App.Domain.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Bookmarks")
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("Construx.App.Domain.Identity.User", "User")
                         .WithMany("BookmarkCompanies")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Company");
 
@@ -559,15 +644,11 @@ namespace Construx.App.Migrations
                 {
                     b.HasOne("Construx.App.Domain.Entities.Service", "Service")
                         .WithMany("Bookmarks")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ServiceId");
 
                     b.HasOne("Construx.App.Domain.Identity.User", "User")
                         .WithMany("BookmarkServices")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Service");
 
@@ -576,13 +657,41 @@ namespace Construx.App.Migrations
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Company", b =>
                 {
+                    b.HasOne("Construx.App.Domain.Entities.City", "City")
+                        .WithMany("Companies")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Construx.App.Domain.Entities.CompanyStatus", "Status")
                         .WithMany("Companies")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("City");
+
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Entities.Plan", b =>
+                {
+                    b.HasOne("Construx.App.Domain.Identity.User", "User")
+                        .WithMany("Plans")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Entities.PlanPart", b =>
+                {
+                    b.HasOne("Construx.App.Domain.Entities.Plan", "Part")
+                        .WithMany("PlanParts")
+                        .HasForeignKey("PartId");
+
+                    b.Navigation("Part");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Representative", b =>
@@ -612,9 +721,7 @@ namespace Construx.App.Migrations
 
                     b.HasOne("Construx.App.Domain.Identity.User", "User")
                         .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Service");
 
@@ -630,7 +737,7 @@ namespace Construx.App.Migrations
                         .IsRequired();
 
                     b.HasOne("Construx.App.Domain.Entities.Company", "Company")
-                        .WithMany("Services")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -638,6 +745,17 @@ namespace Construx.App.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Identity.User", b =>
+                {
+                    b.HasOne("Construx.App.Domain.Entities.City", "City")
+                        .WithMany("Users")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -691,21 +809,48 @@ namespace Construx.App.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PlanPartService", b =>
+                {
+                    b.HasOne("Construx.App.Domain.Entities.PlanPart", null)
+                        .WithMany()
+                        .HasForeignKey("PlanPartsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Construx.App.Domain.Entities.Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Construx.App.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("Construx.App.Domain.Entities.City", b =>
+                {
+                    b.Navigation("Companies");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Construx.App.Domain.Entities.Company", b =>
                 {
-                    b.Navigation("Representative");
+                    b.Navigation("Bookmarks");
 
-                    b.Navigation("Services");
+                    b.Navigation("Representative");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.CompanyStatus", b =>
                 {
                     b.Navigation("Companies");
+                });
+
+            modelBuilder.Entity("Construx.App.Domain.Entities.Plan", b =>
+                {
+                    b.Navigation("PlanParts");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Service", b =>
@@ -720,6 +865,8 @@ namespace Construx.App.Migrations
                     b.Navigation("BookmarkCompanies");
 
                     b.Navigation("BookmarkServices");
+
+                    b.Navigation("Plans");
 
                     b.Navigation("Representative");
 
