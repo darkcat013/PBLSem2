@@ -21,5 +21,6 @@ namespace Construx.App.Domain.Entities
         public int CityId { get; set; }
         public virtual City City { get; set; }
         public virtual ICollection<BookmarkCompany> Bookmarks { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
     }
 }

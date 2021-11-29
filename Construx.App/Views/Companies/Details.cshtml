@@ -4,75 +4,98 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="row" style="height: 540px;">
+    <!--contact info + rating-->
+    <div class="col-3 d-flex flex-column pr-2 justify-content-between" style="overflow-y: auto;">
 
-<div>
-    <h4>Company</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Adress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Adress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IDNO)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IDNO)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Website)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Website)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RepresentativeId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RepresentativeId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City.Id)
-        </dd>
-    </dl>
+        <div class="mb-2 pb-2 d-flex align-items-center" style="">
+            <img class="col-12 p-0" src="~/uploaded/index.jpg" />
+        </div>
+
+        <div class="p-2 d-flex flex-column justify-content-around" style="background-color: lightgray;">
+
+            <div class="p-0 d-flex justify-content-center">
+                <h5 class="mb-2 mt-0 mx-0">Company Info:</h5>
+            </div>
+
+            <div class="d-flex flex-column justify-content-around">
+                <p>Phone: (+373) @Html.DisplayFor(model => model.Phone)</p>
+                <p>Address: @Html.DisplayFor(model => model.Adress)</p>
+                <p>Email: @Html.DisplayFor(model => model.Email)</p>
+                <a class="pb-3 d-inline-block" asp-controller="Users" asp-action="Details" asp-route-id="@Model.Representative.UserId">Representative Profile</a>
+                <p>Rating</p>
+                <a class="pb-3 d-inline-block" href="#">Website</a>
+            </div>
+        </div>
+
+        <div class=" p-2 d-flex flex-column" style="background-color: lightgray;">
+            <h6>Status: @Html.DisplayFor(model => model.Status.Name)</h6>
+            <h6>IDNO: @Html.DisplayFor(model => model.IDNO)</h6>
+        </div>
+    </div>
+
+    <!--name, description, categories, bookmark button,-->
+    <div class="col-4 d-flex flex-column justify-content-around pr-2" style="background-color: lightgray; height: 540px; overflow-y: auto;">
+        <div class="d-flex justify-content-between align-items-baseline p-1">
+            <h3>@Html.DisplayFor(model => model.Name)</h3>
+            <a class="btn btn-secondary d-inline-block" asp-controller="BookmarkCompanies" asp-action="Create">Bookmark</a>
+        </div>
+
+        <div class="d-flex flex-column border-top">
+            <h5 class="m-0">Categories:</h5>
+            <div>
+                <!--select list of distinct categories and display em-->
+                @{var distinctCategories = new List<string>(Model.Services.Select(x => x.Category.Name).Distinct()); }
+                @foreach (var item in distinctCategories)
+                {
+                    <a asp-controller="Services" asp-action="Index" asp-route-category="">@Html.DisplayFor(x => item)</a>
+                    if (item != distinctCategories.Last())
+                    {
+                        <span>|</span>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="d-flex flex-column border-top">
+            <h5 class="m-0">About us:</h5>
+            <div>@Html.DisplayFor(model => model.Description)</div>
+        </div>
+    </div>
+
+    <!--Services-->
+    <div class="col-5" style="overflow-y: auto; height: 540px;">
+        <h4> SERVICES:</h4>
+        @foreach (var item in Model.Services)
+        {
+            <div class="row m-2 p-2" style="background-color: lightgray;">
+                <!--bookmark button + category-->
+                <div class="col-3 d-flex flex-column align-items-center">
+                    <a class="btn btn-secondary btn-sm d-inline-block" asp-controller="BookmarkServices" asp-action="Create">Bookmark</a>
+                    <a class="d-inline-block" asp-controller="Services" asp-action="Index">@Html.DisplayFor(modelItem => item.Category.Name)</a>
+                    <p>RATING</p>
+                </div>
+
+                <!--name + description-->
+                <div class="col-9 d-flex flex-column justify-content-around align-items-center">
+                    <a class="d-inline-block" asp-controller="Services" asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Name)</a>
+                    <p class="m-0">@Html.DisplayFor(modelItem => item.Description)</p>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<!--
+to do:
+    * fix bookmark buttons so they either automatically create a bookmark with the info of the company/service
+      or redirect to BookmarkX/Create with all necessary info filled in already (company/service name, etc);
+    * add colors, prettify this ugly layout
+    * add website to company
+    * fix categories links to Services/ where category == category
+-->

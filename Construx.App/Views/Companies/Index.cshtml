@@ -1,10 +1,46 @@
 ﻿@model IEnumerable<Construx.App.Domain.Entities.Company>
 
-@{
-    ViewData["Title"] = "Index";
-}
+@{ ViewData["Title"] = "Index"; }
 
-<h1>Index</h1>
+<div class="container mb-5">
+    <!--for searching-->
+    <div class="row justify-content-sm-center align-items-center">
+        <form method="get" asp-action="Index" class="col-6 input-group">
+            <input type="search" placeholder="Search for a company" name="searchString" value="@ViewData["getSearchString"]" class="form-control" />
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-start align-content-center">
+        <!--for sorting-->
+        <div class="dropdown col-2 px-0">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButtonSorting" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sort by
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-route-sortOrder="nameASC" asp-route-searchString="@ViewData["getSearchString"]">Name ASC</a> <!--i dont knonw wtf im doing but ok-->
+                <a class="dropdown-item" asp-route-sortOrder="nameDESC" asp-route-searchString="@ViewData["getSearchString"]">Name DESC</a>
+                <a class="dropdown-item" asp-route-searchString="@ViewData["getSearchString"]">Rating DESC</a>
+            </div>
+        </div>
+
+        <!--placeholder for city choosing-->
+        <div class="dropdown col-2 px-0">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButtonSearching" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Choose city
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-route-searchString="@ViewData["getSearchString"]">Example city</a>
+            </div>
+        </div>
+
+        <div class="col-6"></div>
+
+        <a asp-action="Index" class="col-2 px-0"> Get All Companies</a>
+    </div>
+</div>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -28,62 +64,81 @@
                 @Html.DisplayNameFor(model => model.IDNO)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Website)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RepresentativeId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Adress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IDNO)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Website)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RepresentativeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.City.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Adress)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Phone)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Email)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.IDNO)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Status.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Description)
+    </td>
+    <td>
+        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+    </td>
+</tr>}
     </tbody>
 </table>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+<div class="col-4">
+
+    <div class="card m-1">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4 pr-0">
+                    <img class="col-12 p-0" src="~/uploaded/index.jpg" />
+                    <div class="border d-flex align-content-center justify-content-center">
+                        <p>Rating</p>
+                    </div>
+                </div>
+
+                <div class="col-8">
+                    <div class="row border">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="col-6">@Html.DisplayFor(modelItem => item.Name)</a>
+                        <div class="col-6 d-flex justify-content-end">
+                            <p class="m-0">@Html.DisplayFor(modelItem => item.Adress)</p>
+                        </div>
+                    </div>
+
+                    <!--this should route to services index where company is equal to this company-->
+                    <a asp-controller="Services">Services Offered</a>
+
+                    <br />
+                    <div>
+                        Categories:
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>}
+</div>
