@@ -22,7 +22,7 @@ namespace Construx.App.Repositories
             return await _applicationDbContext.Set<TEntity>().ToListAsync();
         }
 
-        public async Task<TEntity> GetById(long id)
+        public async Task<TEntity> GetById(int id)
         {
             return await _applicationDbContext.FindAsync<TEntity>(id);
         }
@@ -39,7 +39,7 @@ namespace Construx.App.Repositories
                 .Add(entity);
         }
 
-        public async Task<TEntity> Delete(long id)
+        public async Task<TEntity> Delete(int id)
         {
             var entity = await _applicationDbContext.Set<TEntity>().FindAsync(id);
             if (entity == null)

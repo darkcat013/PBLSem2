@@ -7,25 +7,41 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Construx.App.Constants;
+using Construx.App.Dtos.Company;
+using Mapster;
+using MediatR;
+using Construx.App.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Construx.App.Domain.Identity;
 
 namespace Construx.App.Controllers
 {
-    public class CompaniesController : Controller
+    public class CompaniesController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IGenericRepository<City> _cityRepository;
+        private readonly IGenericRepository<CompanyStatus> _companyStatusRepository;
+        private readonly UserManager<User> _userManager;
 
-        public CompaniesController(ApplicationDbContext context)
+        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository)
         {
-            _context = context;
+            _companyRepository = companyRepository;
+            _cityRepository = cityRepository;
+            _userManager = userManager;
+            _companyStatusRepository = companyStatusRepository;
         }
 
+        [AllowAnonymous]
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Companies.Include(c => c.Status);
-            return View(await applicationDbContext.ToListAsync());
+            var applicationDbContext = _companyRepository.GetAll();
+            return View(await applicationDbContext);
         }
 
+        [AllowAnonymous]
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -34,9 +50,7 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
-                .Include(c => c.Status)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = await _companyRepository.GetById(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -45,30 +59,45 @@ namespace Construx.App.Controllers
             return View(company);
         }
 
+        
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // GET: Companies/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id");
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name");
             return View();
         }
 
+
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Companies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Adress,Phone,Email,IDNO,StatusId,Description,Id")] Company company)
+        public async Task<IActionResult> Create([Bind("Name,Adress,Phone,Email,IDNO,Website,Description,CityId")] CreateCompanyDto createCompanyDto)
         {
+            var company = createCompanyDto.Adapt<Company>();
             if (ModelState.IsValid)
             {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
+                if(User.IsInRole(UserRoles.Admin))
+                {
+                    company.StatusId = (int)StatusesIds.Approved;
+                }
+                else if(User.IsInRole(UserRoles.Representative))
+                {
+                    company.StatusId = (int)StatusesIds.UnderVerification;
+                    company.RepresentativeId = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
+                }
+                _companyRepository.Add(company);
+                await _companyRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id", company.StatusId);
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
             return View(company);
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -77,21 +106,23 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies.FindAsync(id);
+            var company = await _companyRepository.GetById(id.Value);
             if (company == null)
             {
                 return NotFound();
             }
-            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id", company.StatusId);
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
+            ViewData["StatusId"] = new SelectList(await _companyStatusRepository.GetAll(), "Id", "Name", company.Name);
             return View(company);
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Companies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,StatusId,Description,Id")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,Website,StatusId,Description,RepresentativeId,CityId,Id")] Company company)
         {
             if (id != company.Id)
             {
@@ -102,8 +133,7 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
+                    await _companyRepository.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,10 +148,12 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StatusId"] = new SelectList(_context.Set<CompanyStatus>(), "Id", "Id", company.StatusId);
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
+            ViewData["StatusId"] = new SelectList(await _companyStatusRepository.GetAll(), "Id", "Name", company.Name);
             return View(company);
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -130,9 +162,7 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
-                .Include(c => c.Status)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = await _companyRepository.GetById(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -141,47 +171,20 @@ namespace Construx.App.Controllers
             return View(company);
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Companies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var company = await _context.Companies.FindAsync(id);
-            _context.Companies.Remove(company);
-            await _context.SaveChangesAsync();
+            await _companyRepository.Delete(id);
+            await _companyRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CompanyExists(int id)
         {
-            return _context.Companies.Any(e => e.Id == id);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Index(string searchString, string sortOrder)
-        {
-            //so we'll be able to get this string in the view
-            ViewData["GetSearchString"] = searchString;
-
-            var companies = from c in _context.Companies
-                            select c;
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                companies = companies.Where(c => c.Name.Contains(searchString) || c.Description.Contains(searchString));
-            }
-
-            switch (sortOrder)
-            {
-                case "nameASC":
-                    companies = companies.OrderBy(c => c.Name);
-                    break;
-
-                case "nameDESC":
-                    companies = companies.OrderByDescending(c => c.Name);
-                    break;
-            }
-
-            return View(await companies.ToListAsync());
+            return _companyRepository.GetById(id) != null;
         }
     }
 }

@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Construx.App.Constants;
+using Construx.App.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Construx.App.Interfaces;
 
 namespace Construx.App.Areas.Identity.Pages.Account
 {
@@ -24,15 +27,16 @@ namespace Construx.App.Areas.Identity.Pages.Account
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-
+        private readonly IGenericRepository<City> _cityRepository;
         public RegisterModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger, IGenericRepository<City> cityRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _cityRepository = cityRepository;
         }
 
         [BindProperty]
@@ -54,7 +58,7 @@ namespace Construx.App.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -66,12 +70,40 @@ namespace Construx.App.Areas.Identity.Pages.Account
 
             [Display(Name = "Company representative")]
             public bool Representative { get; set; }
+
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Required]
+            [Display(Name = "Birth date")]
+            public DateTime BirthDate { get; set; }
+
+            [Required]
+            [Display(Name = "City/Region")]
+            public int CityId { get; set; }
+
+            [Display(Name = "City/Region")]
+            public City City { get; set; }
+
+            [Required]
+            [Phone]
+            [Display(Name = "Phone")]
+            public string PhoneNumber { get; set; }
+
+
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -80,7 +112,16 @@ namespace Construx.App.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.UserName, Email = Input.Email };
+                var user = new User 
+                { 
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    BirthDate = Input.BirthDate,
+                    CityId = Input.CityId,
+                    UserName = Input.UserName, 
+                    Email = Input.Email,
+                    PhoneNumber = Input.PhoneNumber,
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -89,7 +130,7 @@ namespace Construx.App.Areas.Identity.Pages.Account
                     {
                         await _userManager.AddToRoleAsync(user, UserRoles.Representative);
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect("~/Companies/Create");
+                        return LocalRedirect("~/Representatives/Create");
                     }
                     else
                     {
@@ -103,7 +144,7 @@ namespace Construx.App.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name");
             // If we got this far, something failed, redisplay form
             return Page();
         }

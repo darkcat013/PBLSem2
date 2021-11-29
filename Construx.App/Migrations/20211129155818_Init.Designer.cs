@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Construx.App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211129100519_Init")]
+    [Migration("20211129155818_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,9 @@ namespace Construx.App.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
@@ -225,9 +228,6 @@ namespace Construx.App.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Status")

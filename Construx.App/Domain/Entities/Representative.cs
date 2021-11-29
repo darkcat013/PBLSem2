@@ -13,7 +13,6 @@ namespace Construx.App.Domain.Entities
         public int? CompanyId { get; set; }
         public virtual Company Company { get; set; }
         public string IDNP { get; set; }
-        public string Phone { get; set; }
         public string JobTitle { get; set; }
         public bool Status { get; set; }
     }

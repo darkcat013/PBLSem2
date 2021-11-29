@@ -12,6 +12,7 @@ namespace Construx.App.Domain.Entities
         public string Phone { get; set; }
         public string Email { get; set; }
         public string IDNO { get; set; }
+        public string Website { get; set; }
         public int StatusId { get; set; }
         public virtual CompanyStatus Status { get; set; }
         public string Description { get; set; }

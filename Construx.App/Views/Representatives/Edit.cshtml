@@ -1,10 +1,17 @@
 ﻿@model Construx.App.Domain.Entities.Representative
 
 @{
-    ViewData["Title"] = "Edit";
+    Layout = null;
 }
 
-<h1>Edit</h1>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+</head>
+<body>
 
 <h4>Representative</h4>
 <hr />
@@ -28,14 +35,14 @@
                 <span asp-validation-for="IDNP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="JobTitle" class="control-label"></label>
                 <input asp-for="JobTitle" class="form-control" />
                 <span asp-validation-for="JobTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                </label>
             </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -52,3 +59,5 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+</body>
+</html>

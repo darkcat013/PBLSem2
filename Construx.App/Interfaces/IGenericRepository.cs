@@ -6,7 +6,7 @@ namespace Construx.App.Interfaces
 {
     public interface IGenericRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<TEntity> GetById(long id);
+        Task<TEntity> GetById(int id);
 
         Task<List<TEntity>> GetAll();
 
@@ -14,7 +14,7 @@ namespace Construx.App.Interfaces
 
         void Add(TEntity entity);
 
-        Task<TEntity> Delete(long id);
+        Task<TEntity> Delete(int id);
 
         Task<int> Count();
     }

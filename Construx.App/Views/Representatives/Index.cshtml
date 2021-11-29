@@ -1,11 +1,17 @@
 ﻿@model IEnumerable<Construx.App.Domain.Entities.Representative>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = null;
 }
 
-<h1>Index</h1>
+<!DOCTYPE html>
 
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -22,10 +28,10 @@
                 @Html.DisplayNameFor(model => model.IDNP)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Phone)
+                @Html.DisplayNameFor(model => model.JobTitle)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.JobTitle)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
             <th></th>
         </tr>
@@ -43,10 +49,10 @@
                 @Html.DisplayFor(modelItem => item.IDNP)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Phone)
+                @Html.DisplayFor(modelItem => item.JobTitle)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.JobTitle)
+                @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -57,3 +63,5 @@
 }
     </tbody>
 </table>
+</body>
+</html>
