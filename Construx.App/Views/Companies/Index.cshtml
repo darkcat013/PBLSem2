@@ -8,6 +8,8 @@
     <div class="row justify-content-sm-center align-items-center">
         <form method="get" asp-action="Index" class="col-6 input-group">
             <input type="search" placeholder="Search for a company" name="searchString" value="@ViewData["getSearchString"]" class="form-control" />
+            <input type="hidden" name="sortCity" value="@ViewData["getSortCity"]" />
+            <input type="hidden" name="sortOrder" value="@ViewData["getSortOrder"]" />
             <input type="submit" value="Search" class="btn btn-primary" />
         </form>
     </div>
@@ -21,26 +23,25 @@
                 Sort by
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" asp-route-sortOrder="nameASC" asp-route-searchString="@ViewData["getSearchString"]">Name ASC</a> <!--i dont knonw wtf im doing but ok-->
-                <a class="dropdown-item" asp-route-sortOrder="nameDESC" asp-route-searchString="@ViewData["getSearchString"]">Name DESC</a>
+                <a class="dropdown-item" asp-route-sortOrder="nameASC" asp-route-searchString="@ViewData["getSearchString"]" asp-route-sortCity="@ViewData["getSortCity"]">Name ASC</a> <!--i dont knonw wtf im doing but ok-->
+                <a class="dropdown-item" asp-route-sortOrder="nameDESC" asp-route-searchString="@ViewData["getSearchString"]" asp-route-sortCity="@ViewData["getSortCity"]">Name DESC</a>
                 <a class="dropdown-item" asp-route-searchString="@ViewData["getSearchString"]">Rating DESC</a>
             </div>
         </div>
 
         <!--placeholder for city choosing-->
         <div class="dropdown col-2 px-0">
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                @{
-                    foreach (var item in ViewBag.Cities)
-                    {
-                        <a class="dropdown-item" asp-route-sortCity="@item.Name" asp-route-searchString="@ViewData["getSearchString"]">@item.Name</a>
-                    }
-                }
-            </div>
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButtonSearching" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 @ViewBag.Cities[0].Name
             </button>
-            
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 500px; overflow-y: auto;">
+                @{
+                    foreach (var item in ViewBag.Cities)
+                    {
+                        <a class="dropdown-item" asp-route-sortCity="@item.Name" asp-route-searchString="@ViewData["getSearchString"]" asp-route-sortOrder="@ViewData["getSortOrder"]">@item.Name</a>
+                    }
+                }
+            </div>
         </div>
 
         <div class="col-6"></div>
@@ -85,73 +86,74 @@
     <tbody>
         @foreach (var item in Model)
         {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.Name)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Adress)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Phone)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Email)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.IDNO)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Status.Name)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Description)
-    </td>
-    <td>
-        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-    </td>
-</tr>}
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IDNO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
 <div class="row">
     @foreach (var item in Model)
     {
-<div class="col-4">
+        <div class="col-4">
 
-    <div class="card m-1">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4 pr-0">
-                    <img class="col-12 p-0" src="~/uploaded/index.jpg" />
-                    <div class="border d-flex align-content-center justify-content-center">
-                        <p>Rating</p>
-                    </div>
-                </div>
+            <div class="card m-1">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4 pr-0">
+                            <img class="col-12 p-0" src="~/uploaded/index.jpg" />
+                            <div class="border d-flex align-content-center justify-content-center">
+                                <p>Rating</p>
+                            </div>
+                        </div>
 
-                <div class="col-8">
-                    <div class="row border">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="col-6">@Html.DisplayFor(modelItem => item.Name)</a>
-                        <div class="col-6 d-flex justify-content-end">
-                            <p class="m-0">@Html.DisplayFor(modelItem => item.City.Name)</p>
+                        <div class="col-8">
+                            <div class="row border">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="col-6">@Html.DisplayFor(modelItem => item.Name)</a>
+                                <div class="col-6 d-flex justify-content-end">
+                                    <p class="m-0">@Html.DisplayFor(modelItem => item.City.Name)</p>
+                                </div>
+                            </div>
+
+                            <!--this should route to services index where company is equal to this company-->
+                            <a asp-controller="Services">Services Offered</a>
+
+                            <br />
+                            <div>
+                                Categories:
+                            </div>
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </div>
                     </div>
-
-                    <!--this should route to services index where company is equal to this company-->
-                    <a asp-controller="Services">Services Offered</a>
-
-                    <br />
-                    <div>
-                        Categories:
-                    </div>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </div>
             </div>
-        </div>
-    </div>
-</div>}
+        </div>}
 </div>
