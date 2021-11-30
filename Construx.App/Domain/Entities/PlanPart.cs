@@ -13,7 +13,7 @@ namespace Construx.App.Domain.Entities
         public virtual PlanPartStatus Status { get; set; }
         public int PlanId { get; set; }
         public virtual Plan Plan { get; set; }
-        public int ServiceId { get; set; }
+        public int? ServiceId { get; set; }
         public virtual Service Service { get; set; }
         public int Priority { get; set; }
     }
