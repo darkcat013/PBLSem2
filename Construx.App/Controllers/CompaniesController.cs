@@ -36,14 +36,22 @@ namespace Construx.App.Controllers
         }
 
         [AllowAnonymous]
-        // GET: Companies
-        public async Task<IActionResult> Index(string searchString, string sortOrder)
+        public async Task<IActionResult> Index(string searchString, string sortOrder, string sortCity)
         {
-            ViewData["GetSearchString"] = searchString;
+            ViewData["getSearchString"] = searchString;
+            ViewData["getSortCity"] = sortCity;
+            ViewData["getSortOrder"] = sortOrder;
+
             IEnumerable<Company> companies = await _companyRepository.GetAll();
+
             if (!String.IsNullOrEmpty(searchString))
             {
-                companies = companies.Where(c => c.Name.Contains(searchString) || c.Description.Contains(searchString));
+                companies = companies.Where(c => c.Name.ToLower().Contains(searchString.ToLower()) || c.Description.ToLower().Contains(searchString.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(sortCity))
+            {
+                companies = companies.Where(c => c.City.Name.Equals(sortCity));
             }
 
             switch (sortOrder)
@@ -59,11 +67,9 @@ namespace Construx.App.Controllers
             ViewData["Cities"] = await _cityRepository.GetAll();
 
             return View(companies.ToList());
-
         }
 
         [AllowAnonymous]
-        // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -80,12 +86,10 @@ namespace Construx.App.Controllers
             return View(company);
         }
 
-        
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
-        // GET: Companies/Create
         public async Task<IActionResult> Create()
         {
-            if(User.IsInRole(UserRoles.Representative))
+            if (User.IsInRole(UserRoles.Representative))
             {
                 var representative = await _representativeRepository.GetByUserName(User.Identity.Name);
                 if (representative.CompanyId == null)
@@ -105,7 +109,6 @@ namespace Construx.App.Controllers
             return View();
         }
 
-
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Companies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -116,14 +119,14 @@ namespace Construx.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(User.IsInRole(UserRoles.Admin))
+                if (User.IsInRole(UserRoles.Admin))
                 {
                     var company = createCompanyDto.Adapt<Company>();
                     company.StatusId = (int)StatusesIds.Approved;
                     _companyRepository.Add(company);
                     await _companyRepository.SaveChangesAsync();
                 }
-                else if(User.IsInRole(UserRoles.Representative))
+                else if (User.IsInRole(UserRoles.Representative))
                 {
                     var representative = await _representativeRepository.GetByUserName(User.Identity.Name);
                     if (representative.CompanyId != null)
@@ -141,7 +144,7 @@ namespace Construx.App.Controllers
                         await _companyRepository.SaveChangesAsync();
                     }
                 }
-                
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name");
@@ -149,7 +152,6 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
-        // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -205,7 +207,6 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
-        // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -250,4 +251,3 @@ namespace Construx.App.Controllers
         }
     }
 }
-
