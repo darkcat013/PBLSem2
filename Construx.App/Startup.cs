@@ -46,6 +46,7 @@ namespace Construx.App
             services.AddScoped<IGenericRepository<City>, GenericRepository<City>>();
             services.AddScoped<IGenericRepository<CompanyStatus>, GenericRepository<CompanyStatus>>();
             services.AddScoped<IRepresentativeRepository, RepresentativeRepository>();
+            services.AddScoped<IGenericRepository<BookmarkCompany>, GenericRepository<BookmarkCompany>>();
 
             var config = new TypeAdapterConfig();
             config.Scan(typeof(Startup).GetTypeInfo().Assembly);
@@ -54,7 +55,7 @@ namespace Construx.App
 
             services.AddControllersWithViews();
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

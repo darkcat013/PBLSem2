@@ -19,7 +19,7 @@
             </div>
 
             <div class="d-flex flex-column justify-content-around">
-                <p>Phone: (+373) @Html.DisplayFor(model => model.Phone)</p>
+                <p>Phone: @Html.DisplayFor(model => model.Phone)</p>
                 <p>Address: @Html.DisplayFor(model => model.Adress)</p>
                 <p>Email: @Html.DisplayFor(model => model.Email)</p>
                 @if (Model.Representative is not null)
@@ -41,7 +41,7 @@
     <div class="col-4 d-flex flex-column justify-content-around pr-2" style="background-color: lightgray; height: 540px; overflow-y: auto;">
         <div class="d-flex justify-content-between align-items-baseline p-1">
             <h3>@Html.DisplayFor(model => model.Name)</h3>
-            <a class="btn btn-secondary d-inline-block" asp-controller="BookmarkCompanies" asp-action="Create">Bookmark</a>
+            <a class="btn btn-secondary d-inline-block" asp-action="BookmarkCompany" asp-route-id="@Model.Id">Bookmark</a>
         </div>
 
         <div class="d-flex flex-column border-top">
@@ -51,7 +51,7 @@
                 @{var distinctCategories = new List<string>(Model.Services.Select(x => x.Category.Name).Distinct()); }
                 @foreach (var item in distinctCategories)
                 {
-                    <a asp-controller="Services" asp-action="Index" asp-route-category="">@Html.DisplayFor(x => item)</a>
+                    <a asp-controller="Services" asp-action="Index" asp-route-sortCategory="@item">@Html.DisplayFor(x => item)</a>
                     if (item != distinctCategories.Last())
                     {
                         <span>|</span>
@@ -75,7 +75,7 @@
                 <!--bookmark button + category-->
                 <div class="col-3 d-flex flex-column align-items-center">
                     <a class="btn btn-secondary btn-sm d-inline-block" asp-controller="BookmarkServices" asp-action="Create">Bookmark</a>
-                    <a class="d-inline-block" asp-controller="Services" asp-action="Index">@Html.DisplayFor(modelItem => item.Category.Name)</a>
+                    <a class="d-inline-block" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@item.Category.Name">@Html.DisplayFor(modelItem => item.Category.Name)</a>
                     <p>RATING</p>
                 </div>
 
@@ -97,8 +97,6 @@
 <!--
 to do:
     * fix bookmark buttons so they either automatically create a bookmark with the info of the company/service
-      or redirect to BookmarkX/Create with all necessary info filled in already (company/service name, etc);
-    * add colors, prettify this ugly layout
-    * add website to company
-    * fix categories links to Services/ where category == category
+      or redirect to Bookmark/Create with all necessary info filled in already (company/service name, etc);
+    * add colors, prettify this ugly layout (RAZVAN)
 -->

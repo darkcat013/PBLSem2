@@ -32,7 +32,7 @@
         <!--placeholder for city choosing-->
         <div class="dropdown col-2 px-0">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButtonSearching" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @ViewBag.Cities[0].Name
+                Select city
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 500px; overflow-y: auto;">
                 @{
@@ -147,6 +147,18 @@
                             <br />
                             <div>
                                 Categories:
+                                <div>
+                                    <!--select list of distinct categories and display em-->
+                                    @{var distinctCategories = new List<string>(item.Services.Select(x => x.Category.Name).Distinct()); }
+                                    @foreach (var cat in distinctCategories)
+                                    {
+                                        <a asp-controller="Services" asp-action="Index" asp-route-sortCategory="@cat">@Html.DisplayFor(x => cat)</a>
+                                        if (cat != distinctCategories.Last())
+                                        {
+                                            <span>|</span>
+                                        }
+                                    }
+                                </div>
                             </div>
                             <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

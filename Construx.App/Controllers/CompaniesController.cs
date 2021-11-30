@@ -25,14 +25,16 @@ namespace Construx.App.Controllers
         private readonly IGenericRepository<CompanyStatus> _companyStatusRepository;
         private readonly IRepresentativeRepository _representativeRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IGenericRepository<BookmarkCompany> _bookmarkRepository;
 
-        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository)
+        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<BookmarkCompany> bookmarkRepository)
         {
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
             _userManager = userManager;
             _companyStatusRepository = companyStatusRepository;
             _representativeRepository = representativeRepository;
+            _bookmarkRepository = bookmarkRepository;
         }
 
         [AllowAnonymous]
@@ -67,6 +69,20 @@ namespace Construx.App.Controllers
             ViewData["Cities"] = await _cityRepository.GetAll();
 
             return View(companies.ToList());
+        }
+
+        public async Task<IActionResult> BookmarkCompany(string id)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            BookmarkCompany bookmarkCompany = new BookmarkCompany
+            {
+                UserId = user.Id,
+                CompanyId = Convert.ToInt32(id)
+            };
+            _bookmarkRepository.Add(bookmarkCompany);
+            await _bookmarkRepository.SaveChangesAsync();
+
+            return LocalRedirect("~/Companies/Details/" + id);
         }
 
         [AllowAnonymous]
