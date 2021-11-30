@@ -57,8 +57,8 @@ namespace Construx.App.Controllers
         // GET: Services/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             return View();
         }
 
@@ -75,8 +75,8 @@ namespace Construx.App.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", service.CategoryId);
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name" );
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             return View(service);
         }
 
@@ -93,8 +93,8 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", service.CategoryId);
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name" );
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             return View(service);
         }
 
