@@ -26,6 +26,10 @@ namespace Construx.App.Data.Seeds
                     new CompanyStatus
                     {
                         Name = Statuses.UnderVerification
+                    },
+                    new CompanyStatus
+                    {
+                        Name = Statuses.NeedsDetails
                     }
                 };
                 foreach (var item in statusesList)

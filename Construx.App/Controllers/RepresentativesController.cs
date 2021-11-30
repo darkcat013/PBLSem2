@@ -9,16 +9,26 @@ using Construx.App.Data;
 using Construx.App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Construx.App.Constants;
+using Construx.App.Repositories;
+using Construx.App.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
+using Construx.App.Interfaces;
+using Mapster;
+using Construx.App.Dtos.Representative;
 
 namespace Construx.App.Controllers
 {
     public class RepresentativesController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRepresentativeRepository _representativeRepository;
+        private readonly UserManager<User> _userManager;
 
-        public RepresentativesController(ApplicationDbContext context)
+        public RepresentativesController(ApplicationDbContext context, IRepresentativeRepository representativeRepository, UserManager<User> userManager)
         {
             _context = context;
+            _representativeRepository = representativeRepository;
+            _userManager = userManager;
         }
 
         [Authorize(Roles = UserRoles.Admin)]
@@ -51,8 +61,16 @@ namespace Construx.App.Controllers
         }
 
         // GET: Representatives/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var representative = new Representative
+            {
+                UserId = currUser.Id
+            };
+            _representativeRepository.Add(representative);
+            await _representativeRepository.SaveChangesAsync();
+            representative = currUser.Representative;
             return View();
         }
 
@@ -61,15 +79,27 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDNP,JobTitle,Status,Id")] Representative representative)
+        public async Task<IActionResult> Create([Bind("IDNP,JobTitle,CompanyExists")] CreateRepresentativeDto createRepresentativeDto)
         {
+            var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var representative = await _representativeRepository.GetByUserId(currUser.Id);
+            
             if (ModelState.IsValid)
             {
-                _context.Add(representative);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                representative.IDNP = createRepresentativeDto.IDNP;
+                representative.JobTitle = createRepresentativeDto.JobTitle;
+                await _representativeRepository.SaveChangesAsync();
+
+                if (!createRepresentativeDto.CompanyExists)
+                {
+                    return LocalRedirect("~/Companies/Create");
+                }
+                else
+                {
+                    return LocalRedirect("~/");
+                }
             }
-            return View(representative);
+            return View(createRepresentativeDto);
         }
 
         [Authorize(Roles = UserRoles.Admin)]

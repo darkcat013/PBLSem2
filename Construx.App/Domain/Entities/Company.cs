@@ -16,7 +16,6 @@ namespace Construx.App.Domain.Entities
         public int StatusId { get; set; }
         public virtual CompanyStatus Status { get; set; }
         public string Description { get; set; }
-        public int? RepresentativeId { get; set; }
         public virtual Representative Representative { get; set; }
         public int CityId { get; set; }
         public virtual City City { get; set; }

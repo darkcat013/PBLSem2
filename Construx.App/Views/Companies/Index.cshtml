@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Construx.App.Domain.Entities.Company>
+﻿@using Construx.App.Constants
+@model IEnumerable<Construx.App.Domain.Entities.Company>
 
 @{ ViewData["Title"] = "Index"; }
 
@@ -28,12 +29,18 @@
 
         <!--placeholder for city choosing-->
         <div class="dropdown col-2 px-0">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButtonSearching" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Choose city
-            </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" asp-route-searchString="@ViewData["getSearchString"]">Example city</a>
+                @{
+                    foreach (var item in ViewBag.Cities)
+                    {
+                        <a class="dropdown-item" asp-route-sortCity="@item.Name" asp-route-searchString="@ViewData["getSearchString"]">@item.Name</a>
+                    }
+                }
             </div>
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButtonSearching" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @ViewBag.Cities[0].Name
+            </button>
+            
         </div>
 
         <div class="col-6"></div>
@@ -42,9 +49,12 @@
     </div>
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.IsInRole(UserRoles.Admin))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -98,8 +108,8 @@
         @Html.DisplayFor(modelItem => item.Description)
     </td>
     <td>
-        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
         <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
         <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
     </td>
 </tr>}
@@ -136,6 +146,9 @@
                     <div>
                         Categories:
                     </div>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </div>
             </div>
         </div>

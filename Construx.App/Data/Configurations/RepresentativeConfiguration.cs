@@ -14,11 +14,13 @@ namespace Construx.App.Data.Configurations
         {
             builder.HasOne(r => r.User)
                 .WithOne(u => u.Representative)
-                .HasForeignKey<Representative>(r => r.UserId);
+                .HasForeignKey<Representative>(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(r => r.Company)
                 .WithOne(c => c.Representative)
-                .HasForeignKey<Representative>(r => r.CompanyId);
+                .HasForeignKey<Representative>(r => r.CompanyId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
         }
     }

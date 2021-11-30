@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Construx.App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211129155818_Init")]
+    [Migration("20211130101842_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,9 +134,6 @@ namespace Construx.App.Migrations
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RepresentativeId")
-                        .HasColumnType("int");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -739,7 +736,7 @@ namespace Construx.App.Migrations
                         .IsRequired();
 
                     b.HasOne("Construx.App.Domain.Entities.Company", "Company")
-                        .WithMany()
+                        .WithMany("Services")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -843,6 +840,8 @@ namespace Construx.App.Migrations
                     b.Navigation("Bookmarks");
 
                     b.Navigation("Representative");
+
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.CompanyStatus", b =>

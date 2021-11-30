@@ -45,6 +45,8 @@ namespace Construx.App
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IGenericRepository<City>, GenericRepository<City>>();
             services.AddScoped<IGenericRepository<CompanyStatus>, GenericRepository<CompanyStatus>>();
+            services.AddScoped<IRepresentativeRepository, RepresentativeRepository>();
+
             var config = new TypeAdapterConfig();
             config.Scan(typeof(Startup).GetTypeInfo().Assembly);
             services.AddSingleton(config);

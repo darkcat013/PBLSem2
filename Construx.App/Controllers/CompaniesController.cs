@@ -23,22 +23,43 @@ namespace Construx.App.Controllers
         private readonly ICompanyRepository _companyRepository;
         private readonly IGenericRepository<City> _cityRepository;
         private readonly IGenericRepository<CompanyStatus> _companyStatusRepository;
+        private readonly IRepresentativeRepository _representativeRepository;
         private readonly UserManager<User> _userManager;
 
-        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository)
+        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository)
         {
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
             _userManager = userManager;
             _companyStatusRepository = companyStatusRepository;
+            _representativeRepository = representativeRepository;
         }
 
         [AllowAnonymous]
         // GET: Companies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string sortOrder)
         {
-            var applicationDbContext = _companyRepository.GetAll();
-            return View(await applicationDbContext);
+            ViewData["GetSearchString"] = searchString;
+            IEnumerable<Company> companies = await _companyRepository.GetAll();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                companies = companies.Where(c => c.Name.Contains(searchString) || c.Description.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "nameASC":
+                    companies = companies.OrderBy(c => c.Name);
+                    break;
+
+                case "nameDESC":
+                    companies = companies.OrderByDescending(c => c.Name);
+                    break;
+            }
+            ViewData["Cities"] = await _cityRepository.GetAll();
+
+            return View(companies.ToList());
+
         }
 
         [AllowAnonymous]
@@ -64,6 +85,22 @@ namespace Construx.App.Controllers
         // GET: Companies/Create
         public async Task<IActionResult> Create()
         {
+            if(User.IsInRole(UserRoles.Representative))
+            {
+                var representative = await _representativeRepository.GetByUserName(User.Identity.Name);
+                if (representative.CompanyId == null)
+                {
+                    var company = new Company { StatusId = (int)StatusesIds.NeedsDetails, CityId = 1 };
+                    _companyRepository.Add(company);
+                    await _companyRepository.SaveChangesAsync();
+                    representative.CompanyId = company.Id;
+                    await _representativeRepository.SaveChangesAsync();
+                }
+                else
+                {
+                    return LocalRedirect("~/");
+                }
+            }
             ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name");
             return View();
         }
@@ -77,24 +114,38 @@ namespace Construx.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Adress,Phone,Email,IDNO,Website,Description,CityId")] CreateCompanyDto createCompanyDto)
         {
-            var company = createCompanyDto.Adapt<Company>();
             if (ModelState.IsValid)
             {
                 if(User.IsInRole(UserRoles.Admin))
                 {
+                    var company = createCompanyDto.Adapt<Company>();
                     company.StatusId = (int)StatusesIds.Approved;
+                    _companyRepository.Add(company);
+                    await _companyRepository.SaveChangesAsync();
                 }
                 else if(User.IsInRole(UserRoles.Representative))
                 {
-                    company.StatusId = (int)StatusesIds.UnderVerification;
-                    company.RepresentativeId = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
+                    var representative = await _representativeRepository.GetByUserName(User.Identity.Name);
+                    if (representative.CompanyId != null)
+                    {
+                        var company = await _companyRepository.GetById(representative.CompanyId.Value);
+                        company.StatusId = (int)StatusesIds.UnderVerification;
+                        company.Name = createCompanyDto.Name;
+                        company.Adress = createCompanyDto.Adress;
+                        company.Phone = createCompanyDto.Phone;
+                        company.Email = createCompanyDto.Email;
+                        company.IDNO = createCompanyDto.IDNO;
+                        company.Website = createCompanyDto.Website;
+                        company.Description = createCompanyDto.Description;
+                        company.CityId = createCompanyDto.CityId;
+                        await _companyRepository.SaveChangesAsync();
+                    }
                 }
-                _companyRepository.Add(company);
-                await _companyRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
-            return View(company);
+            ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name");
+            return View(createCompanyDto);
         }
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
@@ -177,8 +228,19 @@ namespace Construx.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _companyRepository.Delete(id);
-            await _companyRepository.SaveChangesAsync();
+            var company = await _companyRepository.GetById(id);
+            if (company.Representative != null)
+            {
+                await _companyRepository.Delete(id);
+                await _companyRepository.SaveChangesAsync();
+            }
+            else
+            {
+                company.Representative.CompanyId = null;
+                await _companyRepository.SaveChangesAsync();
+                await _companyRepository.Delete(id);
+                await _companyRepository.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 
@@ -188,3 +250,4 @@ namespace Construx.App.Controllers
         }
     }
 }
+

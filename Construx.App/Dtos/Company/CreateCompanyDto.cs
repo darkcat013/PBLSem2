@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Construx.App.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Construx.App.Dtos.Company
 {
@@ -19,5 +20,7 @@ namespace Construx.App.Dtos.Company
         public string Description { get; set; }
         [Required]
         public int CityId { get; set; }
+
+        public City City { get; set; }
     }
 }
