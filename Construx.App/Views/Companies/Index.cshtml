@@ -135,7 +135,7 @@
                     <div class="row border">
                         <a asp-action="Details" asp-route-id="@item.Id" class="col-6">@Html.DisplayFor(modelItem => item.Name)</a>
                         <div class="col-6 d-flex justify-content-end">
-                            <p class="m-0">@Html.DisplayFor(modelItem => item.Adress)</p>
+                            <p class="m-0">@Html.DisplayFor(modelItem => item.City.Name)</p>
                         </div>
                     </div>
 

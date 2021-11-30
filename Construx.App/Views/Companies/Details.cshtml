@@ -22,7 +22,10 @@
                 <p>Phone: (+373) @Html.DisplayFor(model => model.Phone)</p>
                 <p>Address: @Html.DisplayFor(model => model.Adress)</p>
                 <p>Email: @Html.DisplayFor(model => model.Email)</p>
-                <a class="pb-3 d-inline-block" asp-controller="Users" asp-action="Details" asp-route-id="@Model.Representative.UserId">Representative Profile</a>
+                @if (Model.Representative is not null)
+                {
+                    <a class="pb-3 d-inline-block" asp-controller="Users" asp-action="Details" asp-route-id="@Model.Representative.UserId">Representative Profile</a>
+                }
                 <p>Rating</p>
                 <a class="pb-3 d-inline-block" href="#">Website</a>
             </div>
