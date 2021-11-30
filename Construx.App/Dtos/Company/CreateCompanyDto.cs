@@ -14,6 +14,7 @@ namespace Construx.App.Dtos.Company
         [EmailAddress]
         public string Email { get; set; }
         [Required]
+        [Range(6,13)]
         public string IDNO { get; set; }
         public string Website { get; set; }
         [Required]

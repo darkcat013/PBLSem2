@@ -29,9 +29,11 @@ namespace Construx.App.Extensions
                     dbContext.Database.Migrate();
 
                     await CitiesSeed.Seed(dbContext);
+                    await CategoriesSeed.Seed(dbContext);
                     await RolesSeed.Seed(roleManager);
                     await UsersSeed.Seed(userManager);
                     await CompanyStatusesSeed.Seed(dbContext);
+                    await CompaniesSeed.Seed(dbContext);
                     
                 }
                 catch (Exception ex)
