@@ -50,6 +50,7 @@ namespace Construx.App
             services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
             services.AddScoped<IGenericRepository<Review>, GenericRepository<Review>>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IPlanRepository, PlanRepository>();
 
             var config = new TypeAdapterConfig();
             config.Scan(typeof(Startup).GetTypeInfo().Assembly);

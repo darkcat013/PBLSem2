@@ -29,14 +29,14 @@ namespace Construx.App.Controllers
         {
             ViewData["getSortCategory"] = sortCategory;
 
-            IQueryable<Service> services = (IQueryable<Service>)await _serviceRepository.GetAll();
+            IEnumerable<Service> services = await _serviceRepository.GetAll();
 
             if (!String.IsNullOrEmpty(sortCategory))
             {
                 services = services.Where(s => s.Category.Name.Equals(sortCategory));
             }
 
-            return View(await services.ToListAsync());
+            return View(services.ToList());
         }
 
         // GET: Services/Details/5
