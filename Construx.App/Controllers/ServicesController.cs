@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Construx.App.Domain.Identity;
 
 namespace Construx.App.Controllers
 {
@@ -16,12 +18,18 @@ namespace Construx.App.Controllers
         private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IServiceRepository _serviceRepository;
         private readonly ICompanyRepository _companyRepository;
+        private readonly UserManager<User> _userManager;
+        private readonly IPlanPartRepository _planPartRepository;
+        private readonly IPlanRepository _planRepository;
 
-        public ServicesController(IGenericRepository<Category> categoryRepository, IServiceRepository serviceRepository, ICompanyRepository companyRepository)
+        public ServicesController(IGenericRepository<Category> categoryRepository, IServiceRepository serviceRepository, ICompanyRepository companyRepository, UserManager<User> userManager, IPlanPartRepository planPartRepository, IPlanRepository planRepository)
         {
             _categoryRepository = categoryRepository;
             _serviceRepository = serviceRepository;
             _companyRepository = companyRepository;
+            _userManager = userManager;
+            _planPartRepository = planPartRepository;
+            _planRepository = planRepository;
         }
 
         // GET: Services
