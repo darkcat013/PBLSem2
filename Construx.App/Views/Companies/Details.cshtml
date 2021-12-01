@@ -1,4 +1,8 @@
 ﻿@model Construx.App.Domain.Entities.Company
+@using Construx.App.Constants
+@using Microsoft.AspNetCore.Identity
+@using Construx.App.Domain.Identity
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -90,7 +94,11 @@
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    @{var user = (await UserManager.FindByNameAsync(User.Identity.Name)); }
+    @if ((User.IsInRole(UserRoles.Representative) && user.Representative.CompanyId == Model.Id) || User.IsInRole(UserRoles.Admin))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit Company & Add Services</a>
+    }
     <a asp-action="Index">Back to List</a>
 </div>
 
