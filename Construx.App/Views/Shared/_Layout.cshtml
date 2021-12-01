@@ -40,9 +40,10 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Plans" asp-action="Index">My Plans</a>
                             </li>
                         }
-                        @{var user = (await UserManager.FindByNameAsync(User.Identity.Name)); }
+
                         @if (User.IsInRole(UserRoles.Representative))
                         {
+                            var user = (await UserManager.FindByNameAsync(User.Identity.Name));
                             if (user.Representative is not null)
                             {
                                 var companyId = user.Representative.CompanyId;

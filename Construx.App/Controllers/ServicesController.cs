@@ -33,11 +33,18 @@ namespace Construx.App.Controllers
         }
 
         // GET: Services
-        public async Task<IActionResult> Index(string sortCategory)
+        public async Task<IActionResult> Index(string sortCategory, string searchString)
         {
             ViewData["getSortCategory"] = sortCategory;
+            ViewData["getSearchString"] = searchString;
+            ViewData["Categories"] = await _categoryRepository.GetAll();
 
             IEnumerable<Service> services = await _serviceRepository.GetAll();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                services = services.Where(s => s.Name.ToLower().Contains(searchString.ToLower()) || s.Description.ToLower().Contains(searchString.ToLower()));
+            }
 
             if (!String.IsNullOrEmpty(sortCategory))
             {
@@ -85,7 +92,7 @@ namespace Construx.App.Controllers
                 await _serviceRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name" );
+            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
             ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }
@@ -103,7 +110,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name" );
+            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
             ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }

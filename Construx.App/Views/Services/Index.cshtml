@@ -4,7 +4,32 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container mb-5">
+    <!--for searching-->
+    <div class="row d-flex justify-content-sm-center align-items-center">
+        <form method="get" asp-action="Index" class="col-6 input-group">
+            <input type="search" placeholder="Search for a service" name="searchString" value="@ViewData["getSearchString"]" class="form-control" />
+            <input type="hidden" name="sortCategory" value="@ViewData["getSortCategory"]" />
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </form>
+    </div>
+</div>
+
+<div class="row d-flex justify-content-start align-items-center">
+    <div class="dropdown col-2 px-0">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select category
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 500px; overflow-y: auto;">
+            @{
+                foreach (var item in ViewBag.Categories)
+                {
+                    <a class="dropdown-item" asp-route-sortCategory="@item.Name" asp-route-searchString="@ViewData["getSearchString"]">@item.Name</a>
+                }
+            }
+        </div>
+    </div>
+</div>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -28,26 +53,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
