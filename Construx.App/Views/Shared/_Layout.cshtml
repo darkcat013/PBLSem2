@@ -37,8 +37,21 @@
                         @if (User.IsInRole(UserRoles.User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Plans" asp-action="Index">My plans</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Plans" asp-action="Index">My Plans</a>
                             </li>
+                        }
+
+                        @if (User.IsInRole(UserRoles.Representative))
+                        {
+                            var user = (await UserManager.FindByNameAsync(User.Identity.Name));
+                            if (user.Representative is not null)
+                            {
+                                var companyId = user.Representative.CompanyId;
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Companies" asp-action="Details" asp-route-id=@companyId>My Company</a>
+                                </li>
+                            }
                         }
                     </ul>
                     <partial name="_LoginPartial" />
