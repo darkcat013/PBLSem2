@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
+using Construx.App.Interfaces;
 
 namespace Construx.App.Controllers
 {
     public class ServicesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IGenericRepository<Category> _categoryRepository;
+        private readonly IServiceRepository _serviceRepository;
+        private readonly ICompanyRepository _companyRepository;
 
-        public ServicesController(ApplicationDbContext context)
+        public ServicesController(IGenericRepository<Category> categoryRepository, IServiceRepository serviceRepository, ICompanyRepository companyRepository)
         {
-            _context = context;
+            _categoryRepository = categoryRepository;
+            _serviceRepository = serviceRepository;
+            _companyRepository = companyRepository;
         }
 
         // GET: Services
@@ -24,7 +29,7 @@ namespace Construx.App.Controllers
         {
             ViewData["getSortCategory"] = sortCategory;
 
-            var services = from s in _context.Services select s;
+            IQueryable<Service> services = (IQueryable<Service>)await _serviceRepository.GetAll();
 
             if (!String.IsNullOrEmpty(sortCategory))
             {
@@ -42,10 +47,7 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var service = await _context.Services
-                .Include(s => s.Category)
-                .Include(s => s.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var service = await _serviceRepository.GetById(id.Value);
             if (service == null)
             {
                 return NotFound();
@@ -55,10 +57,10 @@ namespace Construx.App.Controllers
         }
 
         // GET: Services/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View();
         }
 
@@ -71,12 +73,12 @@ namespace Construx.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(service);
-                await _context.SaveChangesAsync();
+                _serviceRepository.Add(service);
+                await _serviceRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name" );
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name" );
+            ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }
 
@@ -88,13 +90,13 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var service = await _context.Services.FindAsync(id);
+            var service = await _serviceRepository.GetById(id.Value);
             if (service == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name" );
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name" );
+            ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }
 
@@ -114,12 +116,12 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(service);
-                    await _context.SaveChangesAsync();
+                    await _serviceRepository.Update(service);
+                    await _serviceRepository.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ServiceExists(service.Id))
+                    if (!(await ServiceExists(service.Id)))
                     {
                         return NotFound();
                     }
@@ -130,8 +132,8 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", service.CategoryId);
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }
 
@@ -143,10 +145,7 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var service = await _context.Services
-                .Include(s => s.Category)
-                .Include(s => s.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var service = await _serviceRepository.GetById(id.Value);
             if (service == null)
             {
                 return NotFound();
@@ -160,15 +159,14 @@ namespace Construx.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var service = await _context.Services.FindAsync(id);
-            _context.Services.Remove(service);
-            await _context.SaveChangesAsync();
+            await _serviceRepository.Delete(id);
+            await _serviceRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ServiceExists(int id)
+        private async Task<bool> ServiceExists(int id)
         {
-            return _context.Services.Any(e => e.Id == id);
+            return (await _serviceRepository.GetById(id)) != null;
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Construx.App.Interfaces
         Task SaveChangesAsync();
 
         void Add(TEntity entity);
+        Task<TEntity> Update(TEntity entity);
 
         Task<TEntity> Delete(int id);
 

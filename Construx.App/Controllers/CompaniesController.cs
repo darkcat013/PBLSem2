@@ -202,6 +202,7 @@ namespace Construx.App.Controllers
             {
                 try
                 {
+                    await _companyRepository.Update(company);
                     await _companyRepository.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

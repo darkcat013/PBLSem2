@@ -39,6 +39,13 @@ namespace Construx.App.Repositories
                 .Add(entity);
         }
 
+        public async Task<TEntity> Update(TEntity entity)
+        {
+            _applicationDbContext.Update(entity);
+            await _applicationDbContext.SaveChangesAsync();
+            return entity;
+        }
+
         public async Task<TEntity> Delete(int id)
         {
             var entity = await _applicationDbContext.Set<TEntity>().FindAsync(id);
