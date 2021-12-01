@@ -15,11 +15,13 @@ namespace Construx.App.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPlanRepository _planRepository;
+        private readonly IPlanPartRepository _planPartRepository;
 
-        public PlansController(ApplicationDbContext context, IPlanRepository planRepository)
+        public PlansController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository)
         {
             _context = context;
             _planRepository = planRepository;
+            _planPartRepository = planPartRepository;
         }
 
         // GET: Plans
@@ -44,7 +46,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["PlanParts"] = await _planPartRepository.GetPlanPartsForPlanId(id.Value);
             return View(plan);
         }
 
