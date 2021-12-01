@@ -47,6 +47,9 @@ namespace Construx.App
             services.AddScoped<IGenericRepository<CompanyStatus>, GenericRepository<CompanyStatus>>();
             services.AddScoped<IRepresentativeRepository, RepresentativeRepository>();
             services.AddScoped<IGenericRepository<BookmarkCompany>, GenericRepository<BookmarkCompany>>();
+            services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
+            services.AddScoped<IGenericRepository<Review>, GenericRepository<Review>>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
 
             var config = new TypeAdapterConfig();
             config.Scan(typeof(Startup).GetTypeInfo().Assembly);

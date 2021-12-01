@@ -10,6 +10,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
+        <form method="post" asp-action="CreateService" class="input-group">
+            <input type = "hidden" name = "id" value = "@Model.Id"/>
+            <select class="form-control" asp-items = "@ViewBag.Categories" name="category"></select>
+            <input name = "name" type = "text" />
+            <input name = "description" type = "text" />
+            <input type = "submit" class="btn btn-primary"/>
+        </form>
+        </div>
+    <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">

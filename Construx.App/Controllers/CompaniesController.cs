@@ -26,8 +26,11 @@ namespace Construx.App.Controllers
         private readonly IRepresentativeRepository _representativeRepository;
         private readonly UserManager<User> _userManager;
         private readonly IGenericRepository<BookmarkCompany> _bookmarkRepository;
+        private readonly IGenericRepository<Category> _categoryRepository;
+        private readonly IGenericRepository<Review> _reviewRepository;
+        private readonly IServiceRepository _serviceRepository;
 
-        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<BookmarkCompany> bookmarkRepository)
+        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<BookmarkCompany> bookmarkRepository, IGenericRepository<Category> categoryRepository, IGenericRepository<Review> reviewRepository, IServiceRepository serviceRepository)
         {
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
@@ -35,6 +38,9 @@ namespace Construx.App.Controllers
             _companyStatusRepository = companyStatusRepository;
             _representativeRepository = representativeRepository;
             _bookmarkRepository = bookmarkRepository;
+            _categoryRepository = categoryRepository;
+            _reviewRepository = reviewRepository;
+            _serviceRepository = serviceRepository;
         }
 
         [AllowAnonymous]
@@ -182,6 +188,7 @@ namespace Construx.App.Controllers
             }
             ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
             ViewData["StatusId"] = new SelectList(await _companyStatusRepository.GetAll(), "Id", "Name", company.Name);
+            ViewData["Categories"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
             return View(company);
         }
 
@@ -220,6 +227,7 @@ namespace Construx.App.Controllers
             }
             ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
             ViewData["StatusId"] = new SelectList(await _companyStatusRepository.GetAll(), "Id", "Name", company.Name);
+            ViewData["Categories"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
             return View(company);
         }
 
@@ -260,6 +268,22 @@ namespace Construx.App.Controllers
                 await _companyRepository.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ActionName("CreateService")]
+        public async Task<IActionResult> CreateService(int id, int category, string name, string description)
+        {
+            Service service = new Service
+            {
+                CompanyId = id,
+                CategoryId = category,
+                Name = name,
+                Description = description
+            };
+            _serviceRepository.Add(service);
+            await _serviceRepository.SaveChangesAsync();
+
+            return LocalRedirect($"~/Companies/Details/{id}");
         }
 
         private bool CompanyExists(int id)
