@@ -52,6 +52,8 @@ namespace Construx.App
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IPlanRepository, PlanRepository>();
             services.AddScoped<IPlanPartRepository, PlanPartRepository>();
+            services.AddScoped<IBookmarkCompaniesRepository, BookmarkCompaniesRepository>();
+            services.AddScoped<IGenericRepository<PlanPartStatus>, GenericRepository<PlanPartStatus>>();
 
             var config = new TypeAdapterConfig();
             config.Scan(typeof(Startup).GetTypeInfo().Assembly);

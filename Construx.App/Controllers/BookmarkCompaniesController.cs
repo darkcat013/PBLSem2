@@ -11,29 +11,25 @@ using Construx.App.Interfaces;
 
 namespace Construx.App.Controllers
 {
-    public class PlansController : Controller
+    public class BookmarkCompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IPlanRepository _planRepository;
-        private readonly IPlanPartRepository _planPartRepository;
-        private readonly IGenericRepository<PlanPartStatus> _planPartStatusRepository;
+        private readonly IBookmarkCompaniesRepository _bookmarkCompaniesRepository;
 
-        public PlansController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, IGenericRepository<PlanPartStatus> planPartStatusRepository)
+        public BookmarkCompaniesController(ApplicationDbContext context, IBookmarkCompaniesRepository bookmarkCompaniesRepository)
         {
             _context = context;
-            _planRepository = planRepository;
-            _planPartRepository = planPartRepository;
-            _planPartStatusRepository = planPartStatusRepository; ;
+            _bookmarkCompaniesRepository = bookmarkCompaniesRepository;
         }
 
-        // GET: Plans
+        // GET: BookmarkCompanies
         public async Task<IActionResult> Index()
         {
-            var plans = await _planRepository.GetPlansForUserName(User.Identity.Name);
-            return View(plans);
+            var bookmarksCompanies = await _bookmarkCompaniesRepository.GetBookmarksCompanyForUserName(User.Identity.Name);
+            return View(bookmarksCompanies);
         }
 
-        // GET: Plans/Details/5
+        // GET: BookmarkCompanies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -41,42 +37,45 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var plan = await _context.Plans
-                .Include(p => p.User)
+            var bookmarkCompany = await _context.BookmarkCompanies
+                .Include(b => b.Company)
+                .Include(b => b.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (plan == null)
+            if (bookmarkCompany == null)
             {
                 return NotFound();
             }
-            ViewData["PlanParts"] = await _planPartRepository.GetPlanPartsForPlanId(id.Value);
-            return View(plan);
+
+            return View(bookmarkCompany);
         }
 
-        // GET: Plans/Create
+        // GET: BookmarkCompanies/Create
         public IActionResult Create()
         {
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             ViewData["UserId"] = new SelectList(_context.Users.Where(u => u.UserName.Equals(User.Identity.Name)), "Id", "UserName");
             return View();
         }
 
-        // POST: Plans/Create
+        // POST: BookmarkCompanies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Name,Description,Id")] Plan plan)
+        public async Task<IActionResult> Create([Bind("CompanyId,UserId,Note,DateCreated,Id")] BookmarkCompany bookmarkCompany)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(plan);
+                _context.Add(bookmarkCompany);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", plan.UserId);
-            return View(plan);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", bookmarkCompany.CompanyId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkCompany.UserId);
+            return View(bookmarkCompany);
         }
 
-        // GET: Plans/Edit/5
+        // GET: BookmarkCompanies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,25 +83,24 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var plan = await _context.Plans.FindAsync(id);
-            if (plan == null)
+            var bookmarkCompany = await _context.BookmarkCompanies.FindAsync(id);
+            if (bookmarkCompany == null)
             {
                 return NotFound();
             }
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", bookmarkCompany.CompanyId);
             ViewData["UserId"] = new SelectList(_context.Users.Where(u => u.UserName.Equals(User.Identity.Name)), "Id", "UserName");
-            return View(plan);
+            return View(bookmarkCompany);
         }
 
-        // POST: Plans/Edit/5
+        // POST: BookmarkCompanies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Name,Description,Id")] Plan plan)
+        public async Task<IActionResult> Edit(int id, [Bind("CompanyId,UserId,Note,DateCreated,Id")] BookmarkCompany bookmarkCompany)
         {
-            ViewData["PlanPartStatuses"] = new SelectList(await _planPartStatusRepository.GetAll(), "Id", "Name");
-
-            if (id != plan.Id)
+            if (id != bookmarkCompany.Id)
             {
                 return NotFound();
             }
@@ -111,12 +109,12 @@ namespace Construx.App.Controllers
             {
                 try
                 {
-                    _context.Update(plan);
+                    _context.Update(bookmarkCompany);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PlanExists(plan.Id))
+                    if (!BookmarkCompanyExists(bookmarkCompany.Id))
                     {
                         return NotFound();
                     }
@@ -127,30 +125,12 @@ namespace Construx.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", plan.UserId);
-            return View(plan);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", bookmarkCompany.CompanyId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkCompany.UserId);
+            return View(bookmarkCompany);
         }
 
-        [HttpPost, ActionName("CreatePlanPart")]
-        public async Task<IActionResult> CreatePlanPart(int id, string name, string description, DateTime fromDate, DateTime toDate, int priority, int planPartStatusId)
-        {
-            PlanPart planPart = new PlanPart
-            {
-                PlanId = id,
-                Name = name,
-                Description = description,
-                FromDate = fromDate,
-                ToDate = toDate,
-                Priority = priority,
-                StatusId = planPartStatusId
-            };
-
-            _planPartRepository.Add(planPart);
-            await _planPartRepository.SaveChangesAsync();
-
-            return LocalRedirect($"~/Plans/Details/{id}");
-        }
-
+        // GET: BookmarkCompanies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,31 +138,32 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var plan = await _context.Plans
-                .Include(p => p.User)
+            var bookmarkCompany = await _context.BookmarkCompanies
+                .Include(b => b.Company)
+                .Include(b => b.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (plan == null)
+            if (bookmarkCompany == null)
             {
                 return NotFound();
             }
 
-            return View(plan);
+            return View(bookmarkCompany);
         }
 
-        // POST: Plans/Delete/5
+        // POST: BookmarkCompanies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var plan = await _context.Plans.FindAsync(id);
-            _context.Plans.Remove(plan);
+            var bookmarkCompany = await _context.BookmarkCompanies.FindAsync(id);
+            _context.BookmarkCompanies.Remove(bookmarkCompany);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PlanExists(int id)
+        private bool BookmarkCompanyExists(int id)
         {
-            return _context.Plans.Any(e => e.Id == id);
+            return _context.BookmarkCompanies.Any(e => e.Id == id);
         }
     }
 }
