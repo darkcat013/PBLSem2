@@ -21,5 +21,17 @@ namespace Construx.App.Repositories
             var planParts = _planParts.Where(pp => pp.PlanId == planId);
             return await planParts.ToListAsync();
         }
+
+        public async Task<List<PlanPart>> GetPlanPartsWithoutServiceForPlanId(int planId)
+        {
+            var planParts = _planParts.Where(pp=>pp.PlanId==planId && pp.ServiceId == null);
+            return await planParts.ToListAsync();
+        }
+
+        public async Task<List<PlanPart>> GetPlanPartsWithServiceForPlanId(int planId)
+        {
+            var planParts = _planParts.Where(pp => pp.PlanId == planId && pp.ServiceId != null);
+            return await planParts.ToListAsync();
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["Plans"] = new SelectList(await _planRepository.GetPlansForUserName(User.Identity.Name), "Id", "Name");
             return View(service);
         }
 
@@ -182,6 +182,16 @@ namespace Construx.App.Controllers
         private async Task<bool> ServiceExists(int id)
         {
             return (await _serviceRepository.GetById(id)) != null;
+        }
+
+        [ActionName("AddToPlan")]
+        public async Task<IActionResult> AddToPlan(int serviceid, int plan)
+        {
+            ViewData["Service"] = await _serviceRepository.GetById(serviceid);
+            ViewData["Plan"] = await _planRepository.GetById(plan);
+            ViewData["EmptyPlanParts"] = new SelectList (await _planPartRepository.GetPlanPartsWithoutServiceForPlanId(plan), "Id", "Name");
+            ViewData["PlanParts"] = new SelectList(await _planPartRepository.GetPlanPartsWithServiceForPlanId(plan), "Id", "Name");
+            return View();
         }
     }
 }

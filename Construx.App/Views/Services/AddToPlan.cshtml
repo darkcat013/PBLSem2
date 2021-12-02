@@ -1,0 +1,66 @@
+﻿@model Construx.App.Domain.Entities.Plan
+
+@{
+    ViewData["Title"] = "Add to plan";
+}
+
+<h1>Add or replace service in plan</h1>
+
+<h4>Plan</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller = "PlanParts" asp-action="Create" method="get">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type = "hidden" name = "serviceid" value = "@ViewBag.Service.Id" />
+            <div class="form-group" >
+                <label class = "control-label">Selected service</label>
+                <br />
+                <b>@ViewBag.Service.Name</b>
+            </div>
+            <input type = "hidden" name = "planid" value = "@ViewBag.Plan.Id" />
+            <div class="form-group" >
+                <label class = "control-label">Selected plan</label>
+                <br />
+                <b>@ViewBag.Plan.Name</b>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Add to new plan part">
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="PlanParts" asp-action="ChangeService">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type = "hidden" value = "@ViewBag.Service.Id" name = "serviceId"/>
+            <div class="form-group">
+                <label class = "control-label">Add in plan part: </label>
+                <select class="form-control" asp-items="@ViewBag.EmptyPlanParts" name = "planPartId">
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Add">
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="PlanParts" asp-action="ChangeService" >
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type = "hidden" value = "@ViewBag.Service.Id" name = "serviceId"/>
+            <div class="form-group">
+                <label class = "control-label">Replace service in plan part: </label>
+                <select class="form-control" asp-items="@ViewBag.PlanParts" name = "planPartId">
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Replace">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
