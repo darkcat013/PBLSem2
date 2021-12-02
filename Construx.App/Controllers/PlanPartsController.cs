@@ -17,6 +17,7 @@ namespace Construx.App.Controllers
         private readonly IPlanRepository _planRepository;
         private readonly IServiceRepository _serviceRepository;
         private readonly IPlanPartRepository _planPartRepository;
+
         public PlanPartsController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, IServiceRepository serviceRepository)
         {
             _context = context;
@@ -24,7 +25,6 @@ namespace Construx.App.Controllers
             _planPartRepository = planPartRepository;
             _serviceRepository = serviceRepository;
         }
-
 
         // GET: PlanParts/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -50,7 +50,7 @@ namespace Construx.App.Controllers
         // GET: PlanParts/Create
         public async Task<IActionResult> Create(string planid, string serviceid)
         {
-            if(string.IsNullOrEmpty(planid))
+            if (string.IsNullOrEmpty(planid))
             {
                 ViewData["Plan"] = new SelectList(await _planRepository.GetAll(), "Id", "Name");
             }
@@ -85,7 +85,7 @@ namespace Construx.App.Controllers
                 else
                 {
                     return LocalRedirect($"~/Plans/Details/{planid}");
-                }    
+                }
             }
             if (string.IsNullOrEmpty(planid))
             {
@@ -117,9 +117,9 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Id", planPart.PlanId);
-            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id", planPart.ServiceId);
-            ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Id", planPart.StatusId);
+            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name");
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name");
+            ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Name");
             return View(planPart);
         }
 
@@ -153,11 +153,11 @@ namespace Construx.App.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return LocalRedirect($"~/Plans/Details/{planPart.PlanId}");
             }
-            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Id", planPart.PlanId);
-            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id", planPart.ServiceId);
-            ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Id", planPart.StatusId);
+            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name");
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name");
+            ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Name");
             return View(planPart);
         }
 
