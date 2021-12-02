@@ -10,6 +10,8 @@ using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Construx.App.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Construx.App.Constants;
 
 namespace Construx.App.Controllers
 {
@@ -32,6 +34,7 @@ namespace Construx.App.Controllers
             _planRepository = planRepository;
         }
 
+        [AllowAnonymous]
         // GET: Services
         public async Task<IActionResult> Index(string sortCategory, string searchString)
         {
@@ -54,6 +57,7 @@ namespace Construx.App.Controllers
             return View(services.ToList());
         }
 
+        [AllowAnonymous]
         // GET: Services/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -71,6 +75,7 @@ namespace Construx.App.Controllers
             return View(service);
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // GET: Services/Create
         public async Task<IActionResult> Create()
         {
@@ -78,7 +83,7 @@ namespace Construx.App.Controllers
             ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View();
         }
-
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Services/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -97,6 +102,7 @@ namespace Construx.App.Controllers
             return View(service);
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // GET: Services/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -114,7 +120,7 @@ namespace Construx.App.Controllers
             ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }
-
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Services/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -151,7 +157,7 @@ namespace Construx.App.Controllers
             ViewData["CompanyId"] = new SelectList(await _companyRepository.GetAll(), "Id", "Name");
             return View(service);
         }
-
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // GET: Services/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -168,7 +174,7 @@ namespace Construx.App.Controllers
 
             return View(service);
         }
-
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         // POST: Services/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -184,6 +190,7 @@ namespace Construx.App.Controllers
             return (await _serviceRepository.GetById(id)) != null;
         }
 
+        [Authorize(Roles = UserRoles.User)]
         [ActionName("AddToPlan")]
         public async Task<IActionResult> AddToPlan(int serviceid, int plan)
         {
