@@ -29,7 +29,6 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.User)]
-        // GET: PlanParts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -51,7 +50,6 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.User)]
-        // GET: PlanParts/Create
         public async Task<IActionResult> Create(string planid, string serviceid)
         {
             if (string.IsNullOrEmpty(planid))
@@ -123,7 +121,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name");
+            ViewData["PlanId"] = new SelectList(_context.Plans.Where(p => p.User.UserName.Equals(User.Identity.Name)), "Id", "Name");
             ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name");
             ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Name");
             return View(planPart);
@@ -206,6 +204,7 @@ namespace Construx.App.Controllers
         {
             return _context.PlanParts.Any(e => e.Id == id);
         }
+
         [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> ChangeService(int serviceId, int planPartId)
         {

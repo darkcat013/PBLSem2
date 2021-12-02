@@ -70,8 +70,8 @@ namespace Construx.App.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", bookmarkCompany.CompanyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkCompany.UserId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", bookmarkCompany.CompanyId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Name", bookmarkCompany.UserId);
             return View(bookmarkCompany);
         }
 
@@ -88,7 +88,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", bookmarkCompany.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", bookmarkCompany.CompanyId);
             ViewData["UserId"] = new SelectList(_context.Users.Where(u => u.UserName.Equals(User.Identity.Name)), "Id", "UserName");
             return View(bookmarkCompany);
         }
