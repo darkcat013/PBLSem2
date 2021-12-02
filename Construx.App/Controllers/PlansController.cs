@@ -18,12 +18,16 @@ namespace Construx.App.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlanRepository _planRepository;
         private readonly IPlanPartRepository _planPartRepository;
+        private readonly UserManager<User> _userManager;
+        private readonly IGenericRepository<PlanPartStatus> _planPartStatusRepository;
 
-        public PlansController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository)
+        public PlansController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, UserManager<User> userManager, IGenericRepository<PlanPartStatus> planPartStatusRepository)
         {
             _context = context;
             _planRepository = planRepository;
             _planPartRepository = planPartRepository;
+            _userManager = userManager;
+            _planPartStatusRepository = planPartStatusRepository;
         }
 
         // GET: Plans
@@ -53,9 +57,9 @@ namespace Construx.App.Controllers
         }
 
         // GET: Plans/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
             return View();
         }
 
@@ -64,7 +68,7 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Name,Description,Id")] Plan plan)
+        public async Task<IActionResult> Create([Bind("UserId,Name,Description")] Plan plan)
         {
             if (ModelState.IsValid)
             {
@@ -79,6 +83,8 @@ namespace Construx.App.Controllers
         // GET: Plans/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewData["PlanPartStatuses"] = new SelectList(await _planPartStatusRepository.GetAll(), "Id", "Name");
+
             if (id == null)
             {
                 return NotFound();

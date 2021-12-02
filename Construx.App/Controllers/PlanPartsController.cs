@@ -25,12 +25,6 @@ namespace Construx.App.Controllers
             _serviceRepository = serviceRepository;
         }
 
-        // GET: PlanParts
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.PlanParts.Include(p => p.Plan).Include(p => p.Service).Include(p => p.Status);
-            return View(await applicationDbContext.ToListAsync());
-        }
 
         // GET: PlanParts/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -206,10 +200,14 @@ namespace Construx.App.Controllers
 
         public async Task<IActionResult> ChangeService(int serviceId, int planPartId)
         {
-            var planPart = await _planPartRepository.GetById(planPartId);
-            planPart.ServiceId = serviceId;
-            await _planPartRepository.SaveChangesAsync();
-            return LocalRedirect($"~/PlanParts/Details/{planPartId}");
+            if (planPartId != 0)
+            {
+                var planPart = await _planPartRepository.GetById(planPartId);
+                planPart.ServiceId = serviceId;
+                await _planPartRepository.SaveChangesAsync();
+                return LocalRedirect($"~/PlanParts/Details/{planPartId}");
+            }
+            return LocalRedirect($"~/Services/Details/{serviceId}");
         }
     }
 }
