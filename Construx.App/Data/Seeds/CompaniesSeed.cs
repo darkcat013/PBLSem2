@@ -17,13 +17,13 @@ namespace Construx.App.Data.Seeds
                 {
                     new Company
                     {
-                        Adress = "str. Lupu Vasile, 44",
-                        CityId = 9,
-                        Description = "Intreprinzator individual Tigaie Petru",
+                        Adress = "str. Burebista, 110 ",
+                        CityId = 14,
+                        Description = "Hidroizolare avansate - solutii complexe",
                         Email = "",
                         IDNO = "1017608001927",
-                        Name = "ÎNTREPRINZĂTOR INDIVIDUAL ŢIGAIE PETRU",
-                        Phone = "+37368243534",
+                        Name = "Hidroizolare MD",
+                        Phone = "+373 79 631 301",
                         StatusId = (int)StatusesIds.Approved
                     },
                     new Company
@@ -45,7 +45,7 @@ namespace Construx.App.Data.Seeds
                         Description = "Lista fondatorilor GODOROJA VASILE (10.0%), KONONOV SERGIY (60.0%), KONONOVA OLGA (20.0%), RYBALCHENKO ANDRII (10.0%),",
                         Email = "equipmentsupport@gmail.com",
                         IDNO = "1011600017070",
-                        Name = "SOCIETATEA CU RĂSPUNDERE LIMITATĂ EQUIPMENT-SUPPORT",
+                        Name = "Equipment-Support SRL",
                         Phone = "+37367431353",
                         StatusId = (int)StatusesIds.NotActive,
                     },
@@ -56,7 +56,7 @@ namespace Construx.App.Data.Seeds
                         Description = "Lista fondatorilor CERCHEZ ALEXANDRU (35.0%), CERCHEZ VASILE (35.0%), CERCHEZ VITALIE (30.0%),",
                         Email = "luxprodus@gmail.com",
                         IDNO = "1009600016126",
-                        Name = "SOCIETATEA CU RĂSPUNDERE LIMITATĂ LUXPRODUS",
+                        Name = "Luxprodus SRL",
                         Phone = "+37379038441",
                         StatusId = (int)StatusesIds.Approved,
                         Website = "https://example.com/"
