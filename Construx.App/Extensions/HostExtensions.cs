@@ -38,7 +38,7 @@ namespace Construx.App.Extensions
                     await ServicesSeed.Seed(dbContext);
                     await RepresentativesSeed.Seed(dbContext);
                     await PlansSeed.Seed(dbContext);
-
+                    await PlanPartsSeed.Seed(dbContext);
 
                 }
                 catch (Exception ex)
