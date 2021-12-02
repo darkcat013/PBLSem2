@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Construx.App.Domain.Identity;
 
 namespace Construx.App.Controllers
 {
@@ -16,12 +18,13 @@ namespace Construx.App.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlanRepository _planRepository;
         private readonly IPlanPartRepository _planPartRepository;
-
-        public PlansController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository)
+        private readonly UserManager<User> _userManager;
+        public PlansController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, UserManager<User> userManager)
         {
             _context = context;
             _planRepository = planRepository;
             _planPartRepository = planPartRepository;
+            _userManager = userManager;
         }
 
         // GET: Plans
@@ -51,9 +54,9 @@ namespace Construx.App.Controllers
         }
 
         // GET: Plans/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
             return View();
         }
 
@@ -70,7 +73,7 @@ namespace Construx.App.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", plan.UserId);
+            ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
             return View(plan);
         }
 

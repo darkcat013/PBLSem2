@@ -17,20 +17,16 @@ namespace Construx.App.Data.Seeds
                 {
                     new PlanPartStatus
                     {
-                        Name = Statuses.Approved
+                        Name = PlanPartStatuses.Active
                     },
                     new PlanPartStatus
                     {
-                        Name = Statuses.NotActive
+                        Name = PlanPartStatuses.Finished
                     },
                     new PlanPartStatus
                     {
-                        Name = Statuses.UnderVerification
+                        Name = PlanPartStatuses.InProgress
                     },
-                    new PlanPartStatus
-                    {
-                        Name = Statuses.NeedsDetails
-                    }
                 };
                 foreach (var item in statusesList)
                 {

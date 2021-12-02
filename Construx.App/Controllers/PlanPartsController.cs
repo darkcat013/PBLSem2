@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
+using Construx.App.Interfaces;
 
 namespace Construx.App.Controllers
 {
     public class PlanPartsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public PlanPartsController(ApplicationDbContext context)
+        private readonly IPlanRepository _planRepository;
+        private readonly IServiceRepository _serviceRepository;
+        private readonly IPlanPartRepository _planPartRepository;
+        public PlanPartsController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, IServiceRepository serviceRepository)
         {
             _context = context;
+            _planRepository = planRepository;
+            _planPartRepository = planPartRepository;
+            _serviceRepository = serviceRepository;
         }
 
         // GET: PlanParts
@@ -48,11 +54,22 @@ namespace Construx.App.Controllers
         }
 
         // GET: PlanParts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(string planid, string serviceid)
         {
-            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Id");
-            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id");
-            ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Id");
+            if(string.IsNullOrEmpty(planid))
+            {
+                ViewData["Plan"] = new SelectList(await _planRepository.GetAll(), "Id", "Name");
+            }
+            else
+            {
+                ViewData["Plan"] = new SelectList(new List<Plan> { await _planRepository.GetById(Convert.ToInt32(planid)) }, "Id", "Name");
+            }
+            if (!string.IsNullOrEmpty(serviceid))
+            {
+                ViewData["Service"] = new SelectList(new List<Service> { await _serviceRepository.GetById(Convert.ToInt32(serviceid)) }, "Id", "Name");
+            }
+            else ViewData["Service"] = null;
+            ViewData["Status"] = new SelectList(_context.PlanPartsStatuses, "Id", "Name");
             return View();
         }
 
@@ -61,17 +78,35 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,FromDate,ToDate,StatusId,PlanId,ServiceId,Priority,Id")] PlanPart planPart)
+        public async Task<IActionResult> Create([Bind("Name,Description,FromDate,ToDate,StatusId,PlanId,ServiceId,Priority,Id")] PlanPart planPart, string planid, string serviceid)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(planPart);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (string.IsNullOrEmpty(serviceid))
+                {
+                    return LocalRedirect("~/Services/Index");
+                }
+                else
+                {
+                    return LocalRedirect($"~/Plans/Details/{planid}");
+                }    
             }
-            ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Id", planPart.PlanId);
-            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Id", planPart.ServiceId);
-            ViewData["StatusId"] = new SelectList(_context.PlanPartsStatuses, "Id", "Id", planPart.StatusId);
+            if (string.IsNullOrEmpty(planid))
+            {
+                ViewData["Plan"] = new SelectList(await _planRepository.GetAll(), "Id", "Name");
+            }
+            else
+            {
+                ViewData["Plan"] = new SelectList(new List<Plan> { await _planRepository.GetById(Convert.ToInt32(planid)) }, "Id", "Name");
+            }
+            if (!string.IsNullOrEmpty(serviceid))
+            {
+                ViewData["Service"] = new SelectList(new List<Service> { await _serviceRepository.GetById(Convert.ToInt32(serviceid)) }, "Id", "Name");
+            }
+            else ViewData["Service"] = null;
+            ViewData["Status"] = new SelectList(_context.PlanPartsStatuses, "Id", "Name");
             return View(planPart);
         }
 
@@ -167,6 +202,14 @@ namespace Construx.App.Controllers
         private bool PlanPartExists(int id)
         {
             return _context.PlanParts.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> ChangeService(int serviceId, int planPartId)
+        {
+            var planPart = await _planPartRepository.GetById(planPartId);
+            planPart.ServiceId = serviceId;
+            await _planPartRepository.SaveChangesAsync();
+            return LocalRedirect($"~/PlanParts/Details/{planPartId}");
         }
     }
 }
