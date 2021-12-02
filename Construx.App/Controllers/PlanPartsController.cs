@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
+using Construx.App.Constants;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Construx.App.Controllers
 {
@@ -25,7 +27,7 @@ namespace Construx.App.Controllers
             _serviceRepository = serviceRepository;
         }
 
-
+        [Authorize(Roles = UserRoles.User)]
         // GET: PlanParts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,6 +49,7 @@ namespace Construx.App.Controllers
             return View(planPart);
         }
 
+        [Authorize(Roles = UserRoles.User)]
         // GET: PlanParts/Create
         public async Task<IActionResult> Create(string planid, string serviceid)
         {
@@ -72,6 +75,7 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> Create([Bind("Name,Description,FromDate,ToDate,StatusId,PlanId,ServiceId,Priority,Id")] PlanPart planPart, string planid, string serviceid)
         {
             if (ModelState.IsValid)
@@ -105,6 +109,7 @@ namespace Construx.App.Controllers
         }
 
         // GET: PlanParts/Edit/5
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -128,6 +133,7 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Description,FromDate,ToDate,StatusId,PlanId,ServiceId,Priority,Id")] PlanPart planPart)
         {
             if (id != planPart.Id)
@@ -162,6 +168,7 @@ namespace Construx.App.Controllers
         }
 
         // GET: PlanParts/Delete/5
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -185,6 +192,7 @@ namespace Construx.App.Controllers
         // POST: PlanParts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var planPart = await _context.PlanParts.FindAsync(id);
@@ -197,7 +205,7 @@ namespace Construx.App.Controllers
         {
             return _context.PlanParts.Any(e => e.Id == id);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> ChangeService(int serviceId, int planPartId)
         {
             if (planPartId != 0)

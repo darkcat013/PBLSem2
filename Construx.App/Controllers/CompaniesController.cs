@@ -269,7 +269,7 @@ namespace Construx.App.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         [HttpPost, ActionName("CreateService")]
         public async Task<IActionResult> CreateService(int id, int category, string name, string description)
         {

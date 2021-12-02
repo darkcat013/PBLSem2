@@ -59,7 +59,7 @@ namespace Construx.App.Controllers
 
             return View(representative);
         }
-
+        [Authorize(Roles = UserRoles.Representative)]
         // GET: Representatives/Create
         public async Task<IActionResult> Create()
         {
@@ -73,7 +73,7 @@ namespace Construx.App.Controllers
             representative = currUser.Representative;
             return View();
         }
-
+        [Authorize(Roles = UserRoles.Representative)]
         // POST: Representatives/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -102,7 +102,7 @@ namespace Construx.App.Controllers
             return View(createRepresentativeDto);
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = UserRoles.Representative)]
         // GET: Representatives/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -119,7 +119,7 @@ namespace Construx.App.Controllers
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", representative.CompanyId);
             return View(representative);
         }
-
+        [Authorize(Roles = UserRoles.Representative)]
         // POST: Representatives/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.

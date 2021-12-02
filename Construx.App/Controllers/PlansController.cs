@@ -10,6 +10,8 @@ using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Construx.App.Domain.Identity;
+using Construx.App.Constants;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Construx.App.Controllers
 {
@@ -29,14 +31,14 @@ namespace Construx.App.Controllers
             _userManager = userManager;
             _planPartStatusRepository = planPartStatusRepository;
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // GET: Plans
         public async Task<IActionResult> Index()
         {
             var plans = await _planRepository.GetPlansForUserName(User.Identity.Name);
             return View(plans);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // GET: Plans/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -55,14 +57,14 @@ namespace Construx.App.Controllers
             ViewData["PlanParts"] = await _planPartRepository.GetPlanPartsForPlanId(id.Value);
             return View(plan);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // GET: Plans/Create
         public async Task<IActionResult> Create()
         {
             ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
             return View();
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // POST: Plans/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -79,7 +81,7 @@ namespace Construx.App.Controllers
             ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
             return View(plan);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // GET: Plans/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -98,7 +100,7 @@ namespace Construx.App.Controllers
             ViewData["UserId"] = new SelectList(_context.Users.Where(u => u.UserName.Equals(User.Identity.Name)), "Id", "UserName");
             return View(plan);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // POST: Plans/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -136,7 +138,7 @@ namespace Construx.App.Controllers
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", plan.UserId);
             return View(plan);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         [HttpPost, ActionName("CreatePlanPart")]
         public async Task<IActionResult> CreatePlanPart(int id, string name, string description, DateTime fromDate, DateTime toDate, int priority, int planPartStatusId)
         {
@@ -156,7 +158,7 @@ namespace Construx.App.Controllers
 
             return LocalRedirect($"~/Plans/Details/{id}");
         }
-
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -174,7 +176,7 @@ namespace Construx.App.Controllers
 
             return View(plan);
         }
-
+        [Authorize(Roles = UserRoles.User)]
         // POST: Plans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
