@@ -54,6 +54,9 @@
         </form>
         <br />
     }
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(Model.Company.Representative?.User.UserName)))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Company & Add Services</a>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

@@ -74,7 +74,7 @@
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    @if (User.IsInRole(UserRoles.Admin) || User.Identity.Name.Equals(item.Company.Representative?.User.UserName))
+                    @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(item.Company.Representative?.User.UserName)))
                     {
                         <span>|</span>
                         <a asp-action="Edit" asp-route-id="@item.Id"> Edit </a>

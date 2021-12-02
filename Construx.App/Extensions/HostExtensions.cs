@@ -35,7 +35,11 @@ namespace Construx.App.Extensions
                     await CompanyStatusesSeed.Seed(dbContext);
                     await CompaniesSeed.Seed(dbContext);
                     await PlanPartStatusesSeed.Seed(dbContext);
-                    
+                    await ServicesSeed.Seed(dbContext);
+                    await RepresentativesSeed.Seed(dbContext);
+                    await PlansSeed.Seed(dbContext);
+
+
                 }
                 catch (Exception ex)
                 {

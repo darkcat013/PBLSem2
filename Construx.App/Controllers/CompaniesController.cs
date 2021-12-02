@@ -50,7 +50,7 @@ namespace Construx.App.Controllers
             ViewData["getSortCity"] = sortCity;
             ViewData["getSortOrder"] = sortOrder;
 
-            IEnumerable<Company> companies = await _companyRepository.GetAll();
+            IEnumerable<Company> companies = await _companyRepository.GetApprovedCompanies();
 
             if (!String.IsNullOrEmpty(searchString))
             {

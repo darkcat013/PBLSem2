@@ -42,7 +42,7 @@ namespace Construx.App.Data.Seeds
                     {
                         Adress = "str. Florilor",
                         CityId = 55,
-                        Description = "Lista fondatorilor GODOROJA VASILE (10.0%), KONONOV SERGIY (60.0%), KONONOVA OLGA (20.0%), RYBALCHENKO ANDRII (10.0%),",
+                        Description = "Oferim suport de echipamente de constructii",
                         Email = "equipmentsupport@gmail.com",
                         IDNO = "1011600017070",
                         Name = "Equipment-Support SRL",
@@ -53,7 +53,7 @@ namespace Construx.App.Data.Seeds
                     {
                         Adress = "str. Asachi Gh., 62/5, ap.(of.) 4A",
                         CityId = 14,
-                        Description = "Lista fondatorilor CERCHEZ ALEXANDRU (35.0%), CERCHEZ VASILE (35.0%), CERCHEZ VITALIE (30.0%),",
+                        Description = "Gama larga de servicii",
                         Email = "luxprodus@gmail.com",
                         IDNO = "1009600016126",
                         Name = "Luxprodus SRL",

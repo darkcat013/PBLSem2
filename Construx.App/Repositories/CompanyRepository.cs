@@ -2,6 +2,9 @@
 using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Construx.App.Repositories
 {
@@ -11,6 +14,12 @@ namespace Construx.App.Repositories
         public CompanyRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {
             _companies = applicationDbContext.Set<Company>();
+        }
+
+        public async Task<List<Company>> GetApprovedCompanies()
+        {
+            var companies = _companies.Where(c=>c.StatusId == 1 || c.StatusId == 2);
+            return await companies.ToListAsync();
         }
     }
 }

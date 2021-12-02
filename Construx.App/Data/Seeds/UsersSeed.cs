@@ -51,10 +51,10 @@ namespace Construx.App.Data.Seeds
                 await userManager.AddToRoleAsync(users[1], UserRoles.User);
 
                 await userManager.CreateAsync(users[2], "a12345678");
-                await userManager.AddToRoleAsync(users[2], UserRoles.User);
+                await userManager.AddToRoleAsync(users[2], UserRoles.Representative);
 
                 await userManager.CreateAsync(users[3], "a12345678");
-                await userManager.AddToRoleAsync(users[3], UserRoles.User);
+                await userManager.AddToRoleAsync(users[3], UserRoles.Representative);
 
             }
         }

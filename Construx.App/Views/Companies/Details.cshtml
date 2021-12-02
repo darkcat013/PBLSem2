@@ -94,8 +94,7 @@
 </div>
 
 <div>
-    @{var user = (await UserManager.FindByNameAsync(User.Identity.Name)); }
-    @if ((User.IsInRole(UserRoles.Representative) && user.Representative.CompanyId == Model.Id) || User.IsInRole(UserRoles.Admin))
+    @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(Model.Representative?.User.UserName)))
     {
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Company & Add Services</a>
     }
