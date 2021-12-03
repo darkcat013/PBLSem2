@@ -104,7 +104,7 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["HasBookmark"] = company.Bookmarks.FirstOrDefault(b => b.User.UserName == User.Identity.Name) != null;
             return View(company);
         }
 

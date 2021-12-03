@@ -13,6 +13,6 @@ namespace Construx.App.Domain.Entities
         public int? UserId { get; set; }
         public virtual User User { get; set; }
         public string Note { get; set; }
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.Now;
     }
 }

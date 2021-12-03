@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Construx.App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211130205216_Init")]
+    [Migration("20211203085652_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

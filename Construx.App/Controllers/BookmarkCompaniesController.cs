@@ -8,18 +8,21 @@ using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
 using Construx.App.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Construx.App.Domain.Identity;
 
 namespace Construx.App.Controllers
 {
     public class BookmarkCompaniesController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IBookmarkCompaniesRepository _bookmarkCompaniesRepository;
-
-        public BookmarkCompaniesController(ApplicationDbContext context, IBookmarkCompaniesRepository bookmarkCompaniesRepository)
+        private readonly ICompanyRepository _companyRepository;
+        private readonly UserManager<User> _userManager;
+        public BookmarkCompaniesController(IBookmarkCompaniesRepository bookmarkCompaniesRepository, ICompanyRepository companyRepository, UserManager<User> userManager)
         {
-            _context = context;
             _bookmarkCompaniesRepository = bookmarkCompaniesRepository;
+            _companyRepository = companyRepository;
+            _userManager = userManager;
         }
 
         // GET: BookmarkCompanies
@@ -37,96 +40,13 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var bookmarkCompany = await _context.BookmarkCompanies
-                .Include(b => b.Company)
-                .Include(b => b.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bookmarkCompany = await _bookmarkCompaniesRepository.GetById(id.Value);
+
             if (bookmarkCompany == null)
             {
                 return NotFound();
             }
 
-            return View(bookmarkCompany);
-        }
-
-        // GET: BookmarkCompanies/Create
-        public IActionResult Create()
-        {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users.Where(u => u.UserName.Equals(User.Identity.Name)), "Id", "UserName");
-            return View();
-        }
-
-        // POST: BookmarkCompanies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CompanyId,UserId,Note,DateCreated,Id")] BookmarkCompany bookmarkCompany)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(bookmarkCompany);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", bookmarkCompany.CompanyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Name", bookmarkCompany.UserId);
-            return View(bookmarkCompany);
-        }
-
-        // GET: BookmarkCompanies/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var bookmarkCompany = await _context.BookmarkCompanies.FindAsync(id);
-            if (bookmarkCompany == null)
-            {
-                return NotFound();
-            }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", bookmarkCompany.CompanyId);
-            ViewData["UserId"] = new SelectList(_context.Users.Where(u => u.UserName.Equals(User.Identity.Name)), "Id", "UserName");
-            return View(bookmarkCompany);
-        }
-
-        // POST: BookmarkCompanies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CompanyId,UserId,Note,DateCreated,Id")] BookmarkCompany bookmarkCompany)
-        {
-            if (id != bookmarkCompany.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(bookmarkCompany);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookmarkCompanyExists(bookmarkCompany.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", bookmarkCompany.CompanyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", bookmarkCompany.UserId);
             return View(bookmarkCompany);
         }
 
@@ -138,10 +58,7 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
 
-            var bookmarkCompany = await _context.BookmarkCompanies
-                .Include(b => b.Company)
-                .Include(b => b.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bookmarkCompany = await _bookmarkCompaniesRepository.GetById(id.Value);
             if (bookmarkCompany == null)
             {
                 return NotFound();
@@ -155,15 +72,14 @@ namespace Construx.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bookmarkCompany = await _context.BookmarkCompanies.FindAsync(id);
-            _context.BookmarkCompanies.Remove(bookmarkCompany);
-            await _context.SaveChangesAsync();
+            await _bookmarkCompaniesRepository.Delete(id);
+            await _bookmarkCompaniesRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookmarkCompanyExists(int id)
         {
-            return _context.BookmarkCompanies.Any(e => e.Id == id);
+            return _bookmarkCompaniesRepository.GetById(id) != null;
         }
     }
 }
