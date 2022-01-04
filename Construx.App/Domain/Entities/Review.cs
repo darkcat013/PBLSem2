@@ -12,8 +12,7 @@ namespace Construx.App.Domain.Entities
         public virtual User User { get; set; }
         public int ServiceId { get; set; }
         public virtual Service Service { get; set; }
-        public double Rating { get; set; }
+        public int Rating { get; set; }
         public string Description { get; set; }
     }
 }
-
