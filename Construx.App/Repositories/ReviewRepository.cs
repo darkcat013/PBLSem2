@@ -32,5 +32,11 @@ namespace Construx.App.Repositories
             var reviews = _reviews.Where(r => r.ServiceId == serviceId);
             return await reviews.ToListAsync();
         }
+
+        public async Task<List<Review>> GetReviewsByUserName(string userName)
+        {
+            var reviews = _reviews.Where(r => r.User.UserName == userName);
+            return await reviews.ToListAsync();
+        }
     }
 }

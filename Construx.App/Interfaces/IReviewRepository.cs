@@ -8,6 +8,8 @@ namespace Construx.App.Interfaces
     {
         public Task<List<Review>> GetReviewsByServiceId(int serviceId);
 
+        public Task<List<Review>> GetReviewsByUserName(string userName);
+
         public Task<List<Review>> GetReviewsByCompanyId(int CompanyId);
     }
 }

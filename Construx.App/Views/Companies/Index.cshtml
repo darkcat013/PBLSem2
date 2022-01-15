@@ -71,9 +71,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IDNO)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
@@ -100,16 +98,13 @@
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IDNO)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.Status.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(item.Representative?.User.UserName)))
 
                     {
@@ -128,53 +123,53 @@
 </table>
 
 @*<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-4">
 
-            <div class="card m-1">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-4 pr-0">
-                            <img class="col-12 p-0" src="~/uploaded/index.jpg" />
-                            <div class="border d-flex align-content-center justify-content-center">
-                                <p>Rating</p>
-                            </div>
-                        </div>
-
-                        <div class="col-8">
-                            <div class="row border">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="col-6">@Html.DisplayFor(modelItem => item.Name)</a>
-                                <div class="col-6 d-flex justify-content-end">
-                                    <p class="m-0">@Html.DisplayFor(modelItem => item.City.Name)</p>
+                <div class="card m-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 pr-0">
+                                <img class="col-12 p-0" src="~/uploaded/index.jpg" />
+                                <div class="border d-flex align-content-center justify-content-center">
+                                    <p>Rating</p>
                                 </div>
                             </div>
 
-                            <!--this should route to services index where company is equal to this company-->
-                            <a asp-controller="Services">Services Offered</a>
+                            <div class="col-8">
+                                <div class="row border">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="col-6">@Html.DisplayFor(modelItem => item.Name)</a>
+                                    <div class="col-6 d-flex justify-content-end">
+                                        <p class="m-0">@Html.DisplayFor(modelItem => item.City.Name)</p>
+                                    </div>
+                                </div>
 
-                            <br />
-                            <div>
-                                Categories:
+                                <!--this should route to services index where company is equal to this company-->
+                                <a asp-controller="Services">Services Offered</a>
+
+                                <br />
                                 <div>
-                                    <!--select list of distinct categories and display em-->
-                                    @{var distinctCategories = new List<string>(item.Services.Select(x => x.Category.Name).Distinct()); }
-                                    @foreach (var cat in distinctCategories)
-                                    {
-                                        <a asp-controller="Services" asp-action="Index" asp-route-sortCategory="@cat">@Html.DisplayFor(x => cat)</a>
-                                        if (cat != distinctCategories.Last())
+                                    Categories:
+                                    <div>
+                                        <!--select list of distinct categories and display em-->
+                                        @{var distinctCategories = new List<string>(item.Services.Select(x => x.Category.Name).Distinct()); }
+                                        @foreach (var cat in distinctCategories)
                                         {
-                                            <span>|</span>
+                                            <a asp-controller="Services" asp-action="Index" asp-route-sortCategory="@cat">@Html.DisplayFor(x => cat)</a>
+                                            if (cat != distinctCategories.Last())
+                                            {
+                                                <span>|</span>
+                                            }
                                         }
-                                    }
+                                    </div>
                                 </div>
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                             </div>
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>}
-</div>*@
+            </div>}
+    </div>*@

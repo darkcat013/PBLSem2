@@ -37,7 +37,10 @@
 
         <div class=" p-2 d-flex flex-column" style="background-color: lightgray;">
             <h6>Status: @Html.DisplayFor(model => model.Status.Name)</h6>
-            <h6>IDNO: @Html.DisplayFor(model => model.IDNO)</h6>
+            @if (User.IsInRole(UserRoles.Admin))
+            {
+                <h6>IDNO: @Html.DisplayFor(model => model.IDNO)</h6>
+            }
         </div>
     </div>
 

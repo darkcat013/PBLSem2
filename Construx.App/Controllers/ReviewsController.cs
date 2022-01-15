@@ -33,8 +33,8 @@ namespace Construx.App.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reviews.Include(r => r.Service).Include(r => r.User);
-            return View(await applicationDbContext.ToListAsync());
+            var reviews = await _reviewRepository.GetReviewsByUserName(User.Identity.Name);
+            return View(reviews);
         }
 
         // GET: Reviews/Details/5

@@ -47,7 +47,7 @@
                 <label class="control-label">Select plan</label>
                 <select class="form-control" asp-items="@ViewBag.Plans" name="plan"></select>
             </div>
-            <input type="hidden" value="@Model.Id" name = "serviceid" />
+            <input type="hidden" value="@Model.Id" name="serviceid" />
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Add to my plan">
             </div>
@@ -58,5 +58,32 @@
     {
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Company & Add Services</a>
     }
+    <hr />
+    @if (!ViewBag.HasReview)
+    {
+        <h4>Add a review:</h4>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="AddReview">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" value="@Model.Id" name="serviceId" />
+
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input name="rating" class="form-control" type="number" max="5" min="1" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <textarea name="description" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add Review" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    }
+
     <a asp-action="Index">Back to List</a>
 </div>
