@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="MapsterRegisters\" />
+    <Folder Include="wwwroot\uploaded\icons\NewFolder\" />
   </ItemGroup>
 
 </Project>

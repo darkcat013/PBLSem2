@@ -23,7 +23,7 @@ namespace Construx.App.Controllers
             return View();
         }
 
-        public IActionResult Contacts()
+        public IActionResult FAQ()
         {
             return View();
         }

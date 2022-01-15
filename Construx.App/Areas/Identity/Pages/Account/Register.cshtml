@@ -4,70 +4,100 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
-
 <div class="row">
-        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h4>Create a new account.</h4>
-            <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Input.UserName"></label>
-                <input asp-for="Input.UserName" class="form-control" />
-                <span asp-validation-for="Input.UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Password"></label>
-                <input asp-for="Input.Password" class="form-control" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.ConfirmPassword"></label>
-                <input asp-for="Input.ConfirmPassword" class="form-control" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                    <div class="checkbox">
-                        <label asp-for="Input.Representative">
-                            <input asp-for="Input.Representative" />
-                            @Html.DisplayNameFor(m => m.Input.Representative)
-                        </label>
+    <div class="col-7">
+        <div class="d-flex flex-column align-items-center">
+            <h4>Don't have an account?</h4>
+            <h2>Register now!</h2>
+            <p>Creating an account allows you to experience the full range of features our site has to offer!</p>
+        </div>
+
+        <hr />
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex flex-column justify-content-center">
+
+            <div class="row">
+                <div class="col-6">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Input.UserName"></label>
+                        <input asp-for="Input.UserName" class="form-control" />
+                        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Email"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Password"></label>
+                        <input asp-for="Input.Password" class="form-control" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.ConfirmPassword"></label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label asp-for="Input.Representative">
+                                <input asp-for="Input.Representative" />
+                                @Html.DisplayNameFor(m => m.Input.Representative)
+                            </label>
+                            <span class="d-block" style="color: darkorange;">If you check this box, please read the information on the side.</span>
+                        </div>
                     </div>
                 </div>
-            <hr />
-            <div class="form-group">
-                <label asp-for="Input.FirstName"></label>
-                <input asp-for="Input.FirstName" class="form-control" />
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="Input.FirstName"></label>
+                        <input asp-for="Input.FirstName" class="form-control" />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.LastName"></label>
+                        <input asp-for="Input.LastName" class="form-control" />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.BirthDate"></label>
+                        <input asp-for="Input.BirthDate" class="form-control" />
+                        <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.City" class="control-label"></label>
+                        <select asp-for="Input.CityId" class="form-control" asp-items="ViewBag.CityId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.PhoneNumber"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.LastName"></label>
-                <input asp-for="Input.LastName" class="form-control" />
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary">Register</button>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.BirthDate"></label>
-                <input asp-for="Input.BirthDate" class="form-control" />
-                <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.City" class="control-label"></label>
-                <select asp-for="Input.CityId" class ="form-control" asp-items="ViewBag.CityId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.PhoneNumber"></label>
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            
         </form>
-    
+
+    </div>
+    <div class="col-5 d-flex flex-column align-items-start justify-content-center" >
+        <h4>Important Notice for Company Representatives:</h4>
+        <p>The registration process for company representatives will take place according to the following steps:</p>
+        <p>1. Make sure to check the "Company representative" checkbox on this page.</p>
+        <p>2. Complete all required information on this page and the page that will open after that. 
+        Be prepared to upload documents that prove your identity (<span style="color:darkorange">these documents will be deleted from the database once the registration process is complete</span>). </p>
+        <p>3. If your company is already on the site and you are trying to regain control over it, contact the admin at viorel.noroc013@gmail.com.</p>
+        <p>4. If you wish to add the company as well as create your profile, fill the required information on the page that will open.</p>
+        <p>5. Wait for a response to confirm your account on the email that you provided.</p>
+    </div>
 </div>
+
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
