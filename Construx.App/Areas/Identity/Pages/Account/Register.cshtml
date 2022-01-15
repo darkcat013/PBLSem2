@@ -62,7 +62,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Input.BirthDate"></label>
-                        <input asp-for="Input.BirthDate" class="form-control" />
+                        <input asp-for="Input.BirthDate" class="form-control" type="date" />
                         <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -74,30 +74,27 @@
                         <input asp-for="Input.PhoneNumber" class="form-control" />
                         <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                     </div>
-
                 </div>
             </div>
 
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary">Register</button>
             </div>
-            
         </form>
-
     </div>
-    <div class="col-5 d-flex flex-column align-items-start justify-content-center" >
+    <div class="col-5 d-flex flex-column align-items-start justify-content-center">
         <h4>Important Notice for Company Representatives:</h4>
         <p>The registration process for company representatives will take place according to the following steps:</p>
         <p>1. Make sure to check the "Company representative" checkbox on this page.</p>
-        <p>2. Complete all required information on this page and the page that will open after that. 
-        Be prepared to upload documents that prove your identity (<span style="color:darkorange">these documents will be deleted from the database once the registration process is complete</span>). </p>
+        <p>
+            2. Complete all required information on this page and the page that will open after that.
+            Be prepared to upload documents that prove your identity (<span style="color:darkorange">these documents will be deleted from the database once the registration process is complete</span>).
+        </p>
         <p>3. If your company is already on the site and you are trying to regain control over it, contact the admin at viorel.noroc013@gmail.com.</p>
         <p>4. If you wish to add the company as well as create your profile, fill the required information on the page that will open.</p>
         <p>5. Wait for a response to confirm your account on the email that you provided.</p>
     </div>
 </div>
-
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
