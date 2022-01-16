@@ -50,7 +50,7 @@ namespace Construx.App.Controllers
             var plan = await _context.Plans
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (plan == null)
+            if (plan == null || plan.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -93,7 +93,7 @@ namespace Construx.App.Controllers
             }
 
             var plan = await _context.Plans.FindAsync(id);
-            if (plan == null)
+            if (plan == null || plan.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -169,7 +169,7 @@ namespace Construx.App.Controllers
             var plan = await _context.Plans
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (plan == null)
+            if (plan == null || plan.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }

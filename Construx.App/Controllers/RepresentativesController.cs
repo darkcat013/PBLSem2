@@ -112,7 +112,7 @@ namespace Construx.App.Controllers
             }
 
             var representative = await _context.Representatives.FindAsync(id);
-            if (representative == null)
+            if (representative == null || representative.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }

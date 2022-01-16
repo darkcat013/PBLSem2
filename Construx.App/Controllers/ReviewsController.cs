@@ -49,7 +49,7 @@ namespace Construx.App.Controllers
                 .Include(r => r.Service)
                 .Include(r => r.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (review == null)
+            if (review == null || review.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -92,7 +92,7 @@ namespace Construx.App.Controllers
             }
 
             var review = await _context.Reviews.FindAsync(id);
-            if (review == null)
+            if (review == null || review.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -150,7 +150,7 @@ namespace Construx.App.Controllers
                 .Include(r => r.Service)
                 .Include(r => r.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (review == null)
+            if (review == null || review.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }

@@ -41,7 +41,7 @@ namespace Construx.App.Controllers
                 .Include(p => p.Service)
                 .Include(p => p.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (planPart == null)
+            if (planPart == null || planPart.Plan.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -117,7 +117,7 @@ namespace Construx.App.Controllers
             }
 
             var planPart = await _context.PlanParts.FindAsync(id);
-            if (planPart == null)
+            if (planPart == null || planPart.Plan.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -180,7 +180,7 @@ namespace Construx.App.Controllers
                 .Include(p => p.Service)
                 .Include(p => p.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (planPart == null)
+            if (planPart == null || planPart.Plan.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }

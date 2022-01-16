@@ -18,6 +18,7 @@ namespace Construx.App.Controllers
         private readonly IBookmarkCompaniesRepository _bookmarkCompaniesRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly UserManager<User> _userManager;
+
         public BookmarkCompaniesController(IBookmarkCompaniesRepository bookmarkCompaniesRepository, ICompanyRepository companyRepository, UserManager<User> userManager)
         {
             _bookmarkCompaniesRepository = bookmarkCompaniesRepository;
@@ -42,7 +43,7 @@ namespace Construx.App.Controllers
 
             var bookmarkCompany = await _bookmarkCompaniesRepository.GetById(id.Value);
 
-            if (bookmarkCompany == null)
+            if (bookmarkCompany == null || bookmarkCompany.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }
@@ -59,7 +60,7 @@ namespace Construx.App.Controllers
             }
 
             var bookmarkCompany = await _bookmarkCompaniesRepository.GetById(id.Value);
-            if (bookmarkCompany == null)
+            if (bookmarkCompany == null || bookmarkCompany.User.UserName != User.Identity.Name)
             {
                 return NotFound();
             }

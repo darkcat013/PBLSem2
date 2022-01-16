@@ -176,12 +176,13 @@ namespace Construx.App.Controllers
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            var company = await _companyRepository.GetById(id.Value);
+
+            if (id == null || ((company.Representative == null || company.Representative.User.UserName != User.Identity.Name) && !User.IsInRole(UserRoles.Admin)))
             {
                 return NotFound();
             }
 
-            var company = await _companyRepository.GetById(id.Value);
             if (company == null)
             {
                 return NotFound();

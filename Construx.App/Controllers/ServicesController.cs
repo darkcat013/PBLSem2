@@ -88,13 +88,13 @@ namespace Construx.App.Controllers
                 UserId = user.Id
             };
 
-            if (rating <= 5) _reviewRepository.Add(review);
+            if (rating <= 5 && rating >= 1) _reviewRepository.Add(review);
             await _reviewRepository.SaveChangesAsync();
 
             return LocalRedirect("~/Services/Details/" + serviceId);
         }
 
-        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Create()
         {
             ViewData["CategoryId"] = new SelectList(await _categoryRepository.GetAll(), "Id", "Name");
@@ -102,7 +102,7 @@ namespace Construx.App.Controllers
             return View();
         }
 
-        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
+        [Authorize(Roles = UserRoles.Admin)]
         // POST: Services/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -130,7 +130,7 @@ namespace Construx.App.Controllers
             }
 
             var service = await _serviceRepository.GetById(id.Value);
-            if (service == null)
+            if (service == null || (service.Company.Representative.User.UserName != User.Identity.Name && !User.IsInRole(UserRoles.Admin)))
             {
                 return NotFound();
             }
@@ -186,7 +186,7 @@ namespace Construx.App.Controllers
             }
 
             var service = await _serviceRepository.GetById(id.Value);
-            if (service == null)
+            if (service == null || (service.Company.Representative.User.UserName != User.Identity.Name && !User.IsInRole(UserRoles.Admin)))
             {
                 return NotFound();
             }
