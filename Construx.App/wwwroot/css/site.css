@@ -2,12 +2,26 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 /*--------------------------------------*/
-
+.white-text {
+    color: white !important;
+}
 
 body {
     font-family: 'Comfortaa', sans-serif;
 }
+.bg-gray {
+    background-color: #f8f8f8;
+}
+a {
+    color: #578e9c !important;
+}
 
+.green {
+    color: #5ea900;
+}
+.btn-primary {
+    background-color: #578e9c !important;
+}
 .navbar {
     font-family: 'Varela Round', sans-serif;
 }

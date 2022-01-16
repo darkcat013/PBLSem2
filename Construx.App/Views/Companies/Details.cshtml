@@ -2,67 +2,112 @@
 @using Construx.App.Constants
 @using Microsoft.AspNetCore.Identity
 @using Construx.App.Domain.Identity
+@using System.Linq;
 @inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<div class="row" style="height: 540px;">
-   <div class="col-3 d-flex flex-column justify-content-around" >
-       <img src="~/uploaded/icons/placeholder-logo.png" class="rounded-lg"/>
+<div class="row" style="height: 750px;">
+    <div class="col-3 d-flex flex-column justify-content-around">
+        <img src="~/uploaded/icons/placeholder-logo.png" class="rounded-lg shadow-sm" />
 
-       <div>
-           <h3>Company Info:</h3>
-           <hr />
-           <p>@Html.DisplayNameFor(model => model.Phone): @Html.DisplayFor(model => model.Phone)</p>
-           <p>@Html.DisplayNameFor(model => model.Adress): @Html.DisplayFor(model => model.Adress)</p>
-           <p>Rating: Rating</p>
-           <p>@Html.DisplayNameFor(model => model.Email): @Html.DisplayFor(model => model.Email)</p>
-           
-       </div>
-   </div>
+        <div class="rounded-lg shadow-sm p-3 bg-gray">
 
-    <div class="col-4">
+            <div class="d-flex justify-content-center align-content-center pt-3">
+                <h3 class="m-0">Company Info:</h3>
+            </div>
 
+            <hr />
+            <p>@Html.DisplayNameFor(model => model.Phone): @Html.DisplayFor(model => model.Phone)</p>
+            <p>@Html.DisplayNameFor(model => model.Adress): @Html.DisplayFor(model => model.Adress)</p>
+            <p class="green">@Html.DisplayNameFor(model => model.Rating): @Html.DisplayFor(model => model.Rating)/5</p>
+            <p>@Html.DisplayNameFor(model => model.Email): @Html.DisplayFor(model => model.Email)</p>
+            @if (Model.Website is not null)
+            {
+                <a href="@Model.Website" >Website</a>
+            }
+        </div>
+
+        <div class="rounded-lg shadow-sm p-3 bg-gray">
+            @if (User.IsInRole(UserRoles.Admin))
+            {
+                <p>@Html.DisplayNameFor(model => model.IDNO): @Html.DisplayFor(model => model.IDNO)</p>
+                <p>@Html.DisplayNameFor(model => model.Status): @Html.DisplayFor(model => model.Status.Name)</p>
+            }
+            @if (Model.Representative is not null)
+            {
+                <div class="d-flex justify-content-center align-content-center">
+                    <h5>Representative Contacts:</h5>
+                </div>
+
+                <p>@Html.DisplayNameFor(model => model.Phone): @Html.DisplayFor(model => model.Representative.User.PhoneNumber)</p>
+                <p>@Html.DisplayNameFor(model => model.Email): @Html.DisplayFor(model => model.Representative.User.Email)</p>
+            }
+            <p>@Html.DisplayNameFor(model => model.City): @Html.DisplayFor(model => model.City.Name)</p>
+        </div>
     </div>
 
-    <div class="col-5">
+    <div class="col-4 d-flex flex-column justify-content-start p-3">
 
-    <!--Services-->
-    <div class="col-5" style="overflow-y: auto; height: 540px;">
-        <h4> SERVICES:</h4>
-        @foreach (var item in Model.Services)
-        {
-            <div class="row m-2 p-2" style="background-color: lightgray;">
-                <!--bookmark button + category-->
-            <div class="col-3 d-flex flex-column align-items-center">
-                    @*<a class="btn btn-secondary btn-sm d-inline-block" asp-controller="BookmarkServices" asp-action="Create">Bookmark</a>*@
-                    <a class="d-inline-block" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@item.Category.Name">@Html.DisplayFor(modelItem => item.Category.Name)</a>
-                    <p>@Html.DisplayFor(modelItem => item.Rating)</p>
-                </div>
+        <div class="rounded-lg shadow-sm p-3 bg-gray mb-3">
+            <h3 class="green-link">@Model.Name</h3>
+            @if (!ViewBag.HasBookmark)
+            {
+                <a class="btn btn-secondary btn-small d-inline-block white-text" asp-action="BookmarkCompany" asp-route-id="@Model.Id">Bookmark</a>
+            }
+        </div>
 
-                <!--name + description-->
-            <div class="col-9 d-flex flex-column justify-content-around align-items-center">
-                    <a class="d-inline-block" asp-controller="Services" asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Name)</a>
-                    <p class="m-0">@Html.DisplayFor(modelItem => item.Description)</p>
-                </div>
+        <div class="rounded-lg shadow-sm p-3 bg-gray mb-3">
+            <h4>Categories:</h4>
+            @{
+                var distinctCategories = new List<string>(Model.Services.Select(x => x.Category.Name).Distinct());
+            }
+            @foreach (var item in distinctCategories)
+            {
+                <a class="green-link" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@item">@Html.DisplayFor(x => item)</a>
+                if (item != distinctCategories.Last())
+                {
+                    <span>/</span>
+                }
+            }
+        </div>
+        
+        <div class="rounded-lg shadow-sm p-3 bg-gray h-100">
+            <h4>About us:</h4>
+            <p>@Html.DisplayFor(model => model.Description)</p>
+        </div>
+    </div>
+
+    <div class="col-5 p-3" >
+        <div class="rounded-lg shadow-sm p-3 bg-gray h-100" style="overflow-y: auto;">
+            <h4>Services:</h4>
+            <hr />
+
+            @foreach (var service in Model.Services)
+            {
+            <div >
+                <p class="d-inline">@Html.DisplayNameFor(modelItem => service.Category):</p> <a class="d-inline green-link" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@service.Category.Name">@Html.DisplayFor(modelItem => service.Category.Name)</a>
+                
+                <h5>@Html.DisplayFor(modelItem => service.Name)</h5>
+
+                <p class="green">@Html.DisplayNameFor(modelItem => service.Rating): @Html.DisplayFor(modelItem => service.Rating)/5</p>
+                <p>@Html.DisplayFor(modelItem => service.Description)</p>
+                <hr />
             </div>
-        }
+            }
+
+
+        </div>
     </div>
 </div>
 
-<div>
+<div class="pt-3">
     @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(Model.Representative?.User.UserName)))
     {
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Company & Add Services</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary white-text">Edit Company & Add Services</a>
     }
     <a asp-action="Index">Back to List</a>
 </div>
 
-<!--
-to do:
-    * fix bookmark buttons so they either automatically create a bookmark with the info of the company/service
-      or redirect to Bookmark/Create with all necessary info filled in already (company/service name, etc);
-    * add colors, prettify this ugly layout (RAZVAN)
--->
