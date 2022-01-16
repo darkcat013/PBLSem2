@@ -13,6 +13,7 @@ namespace Construx.App.Domain.Entities
         public virtual Category Category { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public double Rating { get; set; } = 0;
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Bookmark> Bookmarks { get; set; }
         public virtual ICollection<PlanPart> PlanParts { get; set; }

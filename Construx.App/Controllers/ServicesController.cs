@@ -108,9 +108,18 @@ namespace Construx.App.Controllers
                 UserId = user.Id
             };
 
-            if (rating <= 5 && rating >= 1) _reviewRepository.Add(review);
-            await _reviewRepository.SaveChangesAsync();
-
+            if (rating <= 5 && rating >= 1)
+            {
+                _reviewRepository.Add(review);
+                await _reviewRepository.SaveChangesAsync();
+                var service = await _serviceRepository.GetById(review.ServiceId);
+                service.Rating = (await _reviewRepository.GetReviewsByServiceId(service.Id)).Where(x => x.Rating>0).Average(x => x.Rating);
+                await _serviceRepository.SaveChangesAsync();
+                var company = await _companyRepository.GetById(service.CompanyId);
+                company.Rating = (await _serviceRepository.GetServicesByCompanyId(company.Id)).Where(x => x.Rating > 0).Average(x => x.Rating);
+                await _companyRepository.SaveChangesAsync();
+            }
+            
             return LocalRedirect("~/Services/Details/" + serviceId);
         }
 

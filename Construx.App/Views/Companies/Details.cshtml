@@ -90,7 +90,7 @@
             <div class="col-3 d-flex flex-column align-items-center">
                     @*<a class="btn btn-secondary btn-sm d-inline-block" asp-controller="BookmarkServices" asp-action="Create">Bookmark</a>*@
                     <a class="d-inline-block" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@item.Category.Name">@Html.DisplayFor(modelItem => item.Category.Name)</a>
-                    <p>RATING</p>
+                    <p>@Html.DisplayFor(modelItem => item.Rating)</p>
                 </div>
 
                 <!--name + description-->
