@@ -9,6 +9,10 @@
 
 <div>
     <h4>Service</h4>
+    @if (!ViewBag.HasBookmark)
+    {
+        <a class="btn btn-secondary d-inline-block" asp-action="BookmarkService" asp-route-id="@Model.Id">Bookmark</a>
+    }
     <hr />
     <dl class="row">
         <dt class="col-sm-2">

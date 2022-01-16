@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Construx.App.Domain.Entities
 {
-    public class BookmarkCompany : BaseEntity
+    public class Bookmark : BaseEntity
     {
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
+        public int? ServiceId { get; set; }
+        public virtual Service Service { get; set; }
         public virtual Company Company { get; set; }
         public int? UserId { get; set; }
         public virtual User User { get; set; }

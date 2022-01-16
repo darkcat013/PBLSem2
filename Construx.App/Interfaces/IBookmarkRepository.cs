@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Construx.App.Interfaces
 {
-    public interface IBookmarkCompaniesRepository : IGenericRepository<BookmarkCompany>
+    public interface IBookmarkRepository : IGenericRepository<Bookmark>
     {
-        public Task<List<BookmarkCompany>> GetBookmarksCompanyForUserName(string userName);
+        public Task<List<Bookmark>> GetBookmarksForUserName(string userName);
     }
 }

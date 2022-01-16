@@ -10,18 +10,18 @@ using System.Linq;
 
 namespace Construx.App.Repositories
 {
-    public class BookmarkCompaniesRepository : GenericRepository<BookmarkCompany>, IBookmarkCompaniesRepository
+    public class BookmarkRepository : GenericRepository<Bookmark>, IBookmarkRepository
     {
-        private readonly DbSet<BookmarkCompany> _bookmarksCompany;
+        private readonly DbSet<Bookmark> _bookmarksCompany;
         private readonly UserManager<User> _userManager;
 
-        public BookmarkCompaniesRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager) : base(applicationDbContext)
+        public BookmarkRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager) : base(applicationDbContext)
         {
-            _bookmarksCompany = applicationDbContext.Set<BookmarkCompany>();
+            _bookmarksCompany = applicationDbContext.Set<Bookmark>();
             _userManager = userManager;
         }
 
-        public Task<List<BookmarkCompany>> GetBookmarksCompanyForUserName(string userName)
+        public Task<List<Bookmark>> GetBookmarksForUserName(string userName)
         {
             var bookmarksCompany = _bookmarksCompany.Where(bc => bc.User.UserName == userName);
             return bookmarksCompany.ToListAsync();

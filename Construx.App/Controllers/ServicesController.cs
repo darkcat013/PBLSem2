@@ -24,8 +24,9 @@ namespace Construx.App.Controllers
         private readonly IPlanPartRepository _planPartRepository;
         private readonly IPlanRepository _planRepository;
         private readonly IReviewRepository _reviewRepository;
+        private readonly IBookmarkRepository _bookmarkRepository;
 
-        public ServicesController(IGenericRepository<Category> categoryRepository, IServiceRepository serviceRepository, ICompanyRepository companyRepository, UserManager<User> userManager, IPlanPartRepository planPartRepository, IPlanRepository planRepository, IReviewRepository reviewRepository)
+        public ServicesController(IGenericRepository<Category> categoryRepository, IServiceRepository serviceRepository, ICompanyRepository companyRepository, UserManager<User> userManager, IPlanPartRepository planPartRepository, IPlanRepository planRepository, IReviewRepository reviewRepository, IBookmarkRepository bookmarkRepository)
         {
             _categoryRepository = categoryRepository;
             _serviceRepository = serviceRepository;
@@ -34,6 +35,7 @@ namespace Construx.App.Controllers
             _planPartRepository = planPartRepository;
             _planRepository = planRepository;
             _reviewRepository = reviewRepository;
+            _bookmarkRepository = bookmarkRepository;
         }
 
         [AllowAnonymous]
@@ -58,6 +60,23 @@ namespace Construx.App.Controllers
             return View(services.ToList());
         }
 
+        public async Task<IActionResult> BookmarkService(int id)
+        {
+            var service = await _serviceRepository.GetById(id);
+
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            Bookmark bookmark = new()
+            {
+                CompanyId = service.CompanyId,
+                UserId = user.Id,
+                ServiceId = id
+            };
+            _bookmarkRepository.Add(bookmark);
+            await _bookmarkRepository.SaveChangesAsync();
+
+            return LocalRedirect("~/Services/Details/" + id);
+        }
+
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
@@ -73,6 +92,7 @@ namespace Construx.App.Controllers
             }
             ViewData["Plans"] = new SelectList(await _planRepository.GetPlansForUserName(User.Identity.Name), "Id", "Name");
             ViewBag.HasReview = service.Reviews.FirstOrDefault(r => r.User.UserName == User.Identity.Name) != null;
+            ViewBag.HasBookmark = service.Bookmarks.FirstOrDefault(b => b.User.UserName == User.Identity.Name) != null;
             return View(service);
         }
 

@@ -19,7 +19,7 @@ namespace Construx.App.Domain.Entities
         public virtual Representative Representative { get; set; }
         public int CityId { get; set; }
         public virtual City City { get; set; }
-        public virtual ICollection<BookmarkCompany> Bookmarks { get; set; }
+        public virtual ICollection<Bookmark> Bookmarks { get; set; }
         public virtual ICollection<Service> Services { get; set; }
     }
 }

@@ -13,8 +13,8 @@ namespace Construx.App.Domain.Identity
         public string LastName { get; set; }
         public DateTime BirthDate { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
-        public virtual ICollection<BookmarkService> BookmarkServices { get; set; }
-        public virtual ICollection<BookmarkCompany> BookmarkCompanies { get; set; }
+        public virtual ICollection<Bookmark> Bookmarks { get; set; }
+
         public virtual Representative Representative { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Plan> Plans { get; set; }

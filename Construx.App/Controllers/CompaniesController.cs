@@ -25,12 +25,12 @@ namespace Construx.App.Controllers
         private readonly IGenericRepository<CompanyStatus> _companyStatusRepository;
         private readonly IRepresentativeRepository _representativeRepository;
         private readonly UserManager<User> _userManager;
-        private readonly IGenericRepository<BookmarkCompany> _bookmarkRepository;
+        private readonly IGenericRepository<Bookmark> _bookmarkRepository;
         private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IServiceRepository _serviceRepository;
 
-        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<BookmarkCompany> bookmarkRepository, IGenericRepository<Category> categoryRepository, IReviewRepository reviewRepository, IServiceRepository serviceRepository)
+        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<Bookmark> bookmarkRepository, IGenericRepository<Category> categoryRepository, IReviewRepository reviewRepository, IServiceRepository serviceRepository)
         {
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
@@ -80,7 +80,7 @@ namespace Construx.App.Controllers
         public async Task<IActionResult> BookmarkCompany(string id)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            BookmarkCompany bookmarkCompany = new()
+            Bookmark bookmarkCompany = new()
             {
                 UserId = user.Id,
                 CompanyId = Convert.ToInt32(id)
