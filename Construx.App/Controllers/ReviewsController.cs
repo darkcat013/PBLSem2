@@ -21,13 +21,15 @@ namespace Construx.App.Controllers
         private readonly IReviewRepository _reviewRepository;
         private readonly UserManager<User> _userManager;
         private readonly IServiceRepository _serviceRepository;
+        private readonly ICompanyRepository _companyRepository;
 
-        public ReviewsController(ApplicationDbContext context, IReviewRepository reviewRepository, IServiceRepository serviceRepository, UserManager<User> userManager)
+        public ReviewsController(ApplicationDbContext context, IReviewRepository reviewRepository, IServiceRepository serviceRepository, UserManager<User> userManager, ICompanyRepository companyRepository)
         {
             _context = context;
             _reviewRepository = reviewRepository;
             _userManager = userManager;
             _serviceRepository = serviceRepository;
+            _companyRepository = companyRepository;
         }
 
         // GET: Reviews
@@ -35,52 +37,6 @@ namespace Construx.App.Controllers
         {
             var reviews = await _reviewRepository.GetReviewsByUserName(User.Identity.Name);
             return View(reviews);
-        }
-
-        // GET: Reviews/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var review = await _context.Reviews
-                .Include(r => r.Service)
-                .Include(r => r.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (review == null || review.User.UserName != User.Identity.Name)
-            {
-                return NotFound();
-            }
-
-            return View(review);
-        }
-
-        // GET: Reviews/Create
-        public async Task<IActionResult> Create()
-        {
-            ViewData["ServiceId"] = new SelectList(await _serviceRepository.GetAll(), "Id", "Name");
-            ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
-            return View();
-        }
-
-        // POST: Reviews/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,ServiceId,Rating,Description,Id")] Review review)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(review);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ServiceId"] = new SelectList(await _serviceRepository.GetAll(), "Id", "Name");
-            ViewData["UserId"] = (await _userManager.FindByNameAsync(User.Identity.Name)).Id;
-            return View(review);
         }
 
         // GET: Reviews/Edit/5
@@ -119,6 +75,12 @@ namespace Construx.App.Controllers
                 {
                     _context.Update(review);
                     await _context.SaveChangesAsync();
+                    var service = await _serviceRepository.GetById(review.ServiceId);
+                    service.Rating = (await _reviewRepository.GetReviewsByServiceId(service.Id)).Where(x => x.Rating > 0).Average(x => x.Rating);
+                    await _serviceRepository.SaveChangesAsync();
+                    var company = await _companyRepository.GetById(service.CompanyId);
+                    company.Rating = (await _serviceRepository.GetServicesByCompanyId(company.Id)).Where(x => x.Rating > 0).Average(x => x.Rating);
+                    await _companyRepository.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -164,8 +126,15 @@ namespace Construx.App.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var review = await _context.Reviews.FindAsync(id);
+            int serviceId = review.ServiceId;
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
+            var service = await _serviceRepository.GetById(serviceId);
+            service.Rating = (await _reviewRepository.GetReviewsByServiceId(service.Id)).Where(x => x.Rating > 0).Select(x => x.Rating).DefaultIfEmpty(0).Average();
+            await _serviceRepository.SaveChangesAsync();
+            var company = await _companyRepository.GetById(service.CompanyId);
+            company.Rating = (await _serviceRepository.GetServicesByCompanyId(company.Id)).Where(x => x.Rating > 0).Select(x => x.Rating).DefaultIfEmpty(0).Average();
+            await _companyRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

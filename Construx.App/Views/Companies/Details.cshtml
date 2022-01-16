@@ -29,6 +29,26 @@
 
     <div class="col-5">
 
+    <!--Services-->
+    <div class="col-5" style="overflow-y: auto; height: 540px;">
+        <h4> SERVICES:</h4>
+        @foreach (var item in Model.Services)
+        {
+            <div class="row m-2 p-2" style="background-color: lightgray;">
+                <!--bookmark button + category-->
+            <div class="col-3 d-flex flex-column align-items-center">
+                    @*<a class="btn btn-secondary btn-sm d-inline-block" asp-controller="BookmarkServices" asp-action="Create">Bookmark</a>*@
+                    <a class="d-inline-block" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@item.Category.Name">@Html.DisplayFor(modelItem => item.Category.Name)</a>
+                    <p>@Html.DisplayFor(modelItem => item.Rating)</p>
+                </div>
+
+                <!--name + description-->
+            <div class="col-9 d-flex flex-column justify-content-around align-items-center">
+                    <a class="d-inline-block" asp-controller="Services" asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Name)</a>
+                    <p class="m-0">@Html.DisplayFor(modelItem => item.Description)</p>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
