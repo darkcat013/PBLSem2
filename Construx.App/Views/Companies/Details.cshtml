@@ -9,9 +9,16 @@
     ViewData["Title"] = "Details";
 }
 
-<div class="row" style="height: 750px;">
+<div class="row" style="max-height: 750px;">
     <div class="col-3 d-flex flex-column justify-content-around">
-        <img src="~/uploaded/icons/placeholder-logo.png" class="rounded-lg shadow-sm" />
+        @if (ViewBag.HasPhoto)
+        {
+            <img src="@ViewBag.photo[0].Name" class="rounded-lg shadow-sm" style="max-height: 250px;" />
+        }
+        else
+        {
+            <img src="/uploaded/icons/placeholder-logo.png" class="rounded-lg shadow-sm" />
+        }
 
         <div class="rounded-lg shadow-sm p-3 bg-gray">
 
@@ -26,7 +33,7 @@
             <p>@Html.DisplayNameFor(model => model.Email): @Html.DisplayFor(model => model.Email)</p>
             @if (Model.Website is not null)
             {
-                <a href="@Model.Website" >Website</a>
+                <a href="@Model.Website">Website</a>
             }
         </div>
 
@@ -73,41 +80,38 @@
                 }
             }
         </div>
-        
+
         <div class="rounded-lg shadow-sm p-3 bg-gray h-100">
             <h4>About us:</h4>
             <p>@Html.DisplayFor(model => model.Description)</p>
         </div>
     </div>
 
-    <div class="col-5 p-3" >
+    <div class="col-5 p-3">
         <div class="rounded-lg shadow-sm p-3 bg-gray h-100" style="overflow-y: auto;">
             <h4>Services:</h4>
             <hr />
 
             @foreach (var service in Model.Services)
             {
-            <div >
-                <p class="d-inline">@Html.DisplayNameFor(modelItem => service.Category):</p> <a class="d-inline green-link" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@service.Category.Name">@Html.DisplayFor(modelItem => service.Category.Name)</a>
-                
-                <h5>@Html.DisplayFor(modelItem => service.Name)</h5>
+                <div>
+                    <p class="d-inline">@Html.DisplayNameFor(modelItem => service.Category):</p> <a class="d-inline green-link" asp-controller="Services" asp-action="Index" asp-route-sortCategory="@service.Category.Name">@Html.DisplayFor(modelItem => service.Category.Name)</a>
 
-                <p class="green">@Html.DisplayNameFor(modelItem => service.Rating): @Html.DisplayFor(modelItem => service.Rating)/5</p>
-                <p>@Html.DisplayFor(modelItem => service.Description)</p>
-                <hr />
-            </div>
+                    <h5>@Html.DisplayFor(modelItem => service.Name)</h5>
+
+                    <p class="green">@Html.DisplayNameFor(modelItem => service.Rating): @Html.DisplayFor(modelItem => service.Rating)/5</p>
+                    <p>@Html.DisplayFor(modelItem => service.Description)</p>
+                    <hr />
+                </div>
             }
-
-
         </div>
     </div>
 </div>
 
-<div class="pt-3">
+<div class="pt-5">
     @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(Model.Representative?.User.UserName)))
     {
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary white-text">Edit Company & Add Services</a>
     }
     <a asp-action="Index">Back to List</a>
 </div>
-

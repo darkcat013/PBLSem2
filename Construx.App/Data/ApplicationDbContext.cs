@@ -27,6 +27,8 @@ namespace Construx.App.Data
         public DbSet<Plan> Plans { get; set; }
         public DbSet<PlanPart> PlanParts { get; set; }
         public DbSet<PlanPartStatus> PlanPartsStatuses { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<ObjectType> ObjectTypes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

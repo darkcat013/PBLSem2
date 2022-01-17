@@ -15,6 +15,9 @@ using MediatR;
 using Construx.App.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Construx.App.Domain.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Construx.App.Controllers
 {
@@ -29,8 +32,10 @@ namespace Construx.App.Controllers
         private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IServiceRepository _serviceRepository;
+        private readonly IPhotoRepository _photoRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<Bookmark> bookmarkRepository, IGenericRepository<Category> categoryRepository, IReviewRepository reviewRepository, IServiceRepository serviceRepository)
+        public CompaniesController(ICompanyRepository companyRepository, IGenericRepository<City> cityRepository, UserManager<User> userManager, IGenericRepository<CompanyStatus> companyStatusRepository, IRepresentativeRepository representativeRepository, IGenericRepository<Bookmark> bookmarkRepository, IGenericRepository<Category> categoryRepository, IReviewRepository reviewRepository, IServiceRepository serviceRepository, IPhotoRepository photoRepository, IWebHostEnvironment webHostEnvironment)
         {
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
@@ -41,6 +46,8 @@ namespace Construx.App.Controllers
             _categoryRepository = categoryRepository;
             _reviewRepository = reviewRepository;
             _serviceRepository = serviceRepository;
+            _photoRepository = photoRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [AllowAnonymous]
@@ -105,6 +112,10 @@ namespace Construx.App.Controllers
                 return NotFound();
             }
             ViewData["HasBookmark"] = company.Bookmarks.FirstOrDefault(b => b.User.UserName == User.Identity.Name) != null;
+            IEnumerable<Photo> photo = new List<Photo>(await _photoRepository.GetPhotoByCompanyId(id.Value));
+            ViewBag.HasPhoto = photo.Any();
+            ViewBag.photo = photo;
+
             return View(company);
         }
 
@@ -174,7 +185,7 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Representative)]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, IFormFile file)
         {
             var company = await _companyRepository.GetById(id.Value);
 
@@ -199,12 +210,20 @@ namespace Construx.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,Website,StatusId,Description,RepresentativeId,CityId,Id")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Adress,Phone,Email,IDNO,Website,StatusId,Description,RepresentativeId,CityId,Id")] Company company, IFormFile file)
         {
             if (id != company.Id)
             {
                 return NotFound();
             }
+            var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var currPhoto = await _photoRepository.GetPhotoByCompanyId(id);
+            if (currPhoto.Any())
+            {
+                await DeletePhoto(currPhoto[0].Id);
+            }
+
+            await CreateAndUploadPhoto(ObjectTypes.Company, file, (int)ObjectTypesIds.Company, currUser.Id, id);
 
             if (ModelState.IsValid)
             {
@@ -224,7 +243,7 @@ namespace Construx.App.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return LocalRedirect("~/Companies/Details/" + id);
             }
             ViewData["CityId"] = new SelectList(await _cityRepository.GetAll(), "Id", "Name", company.Name);
             ViewData["StatusId"] = new SelectList(await _companyStatusRepository.GetAll(), "Id", "Name", company.Name);
@@ -291,6 +310,41 @@ namespace Construx.App.Controllers
         private bool CompanyExists(int id)
         {
             return _companyRepository.GetById(id) != null;
+        }
+
+        public async Task CreateAndUploadPhoto(string folder, IFormFile file, int objectTypeId, int userId, int objectId)
+        {
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            string filename = "/uploaded/" + folder + "/" + Path.GetFileNameWithoutExtension(file.FileName) + DateTime.Now.Ticks + Path.GetExtension(file.FileName);
+            string path = wwwRootPath + filename;
+
+            var photo = new Photo
+            {
+                Name = filename,
+                ObjectTypeId = objectTypeId,
+                ObjectId = objectId,
+                UserId = userId
+            };
+
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            _photoRepository.Add(photo);
+            await _photoRepository.SaveChangesAsync();
+        }
+
+        public async Task DeletePhoto(int id)
+        {
+            var photo = await _photoRepository.GetById(id);
+
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            var path = wwwRootPath + photo.Name;
+
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+            await _photoRepository.Delete(id);
+            await _photoRepository.SaveChangesAsync();
         }
     }
 }

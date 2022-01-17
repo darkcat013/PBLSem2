@@ -42,19 +42,22 @@ namespace Construx.App
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddScoped<ICompanyRepository, CompanyRepository>();
-            services.AddScoped<IGenericRepository<City>, GenericRepository<City>>();
-            services.AddScoped<IGenericRepository<CompanyStatus>, GenericRepository<CompanyStatus>>();
-            services.AddScoped<IRepresentativeRepository, RepresentativeRepository>();
             services.AddScoped<IGenericRepository<Bookmark>, GenericRepository<Bookmark>>();
             services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
             services.AddScoped<IGenericRepository<Review>, GenericRepository<Review>>();
+            services.AddScoped<IGenericRepository<City>, GenericRepository<City>>();
+            services.AddScoped<IGenericRepository<CompanyStatus>, GenericRepository<CompanyStatus>>();
+            services.AddScoped<IGenericRepository<PlanPartStatus>, GenericRepository<PlanPartStatus>>();
+            services.AddScoped<IGenericRepository<Photo>, GenericRepository<Photo>>();
+
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<IRepresentativeRepository, RepresentativeRepository>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IPlanRepository, PlanRepository>();
             services.AddScoped<IPlanPartRepository, PlanPartRepository>();
             services.AddScoped<IBookmarkRepository, BookmarkRepository>();
-            services.AddScoped<IGenericRepository<PlanPartStatus>, GenericRepository<PlanPartStatus>>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
 
             var config = new TypeAdapterConfig();
             config.Scan(typeof(Startup).GetTypeInfo().Assembly);

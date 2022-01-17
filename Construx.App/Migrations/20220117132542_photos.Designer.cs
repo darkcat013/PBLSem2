@@ -4,14 +4,16 @@ using Construx.App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Construx.App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220117132542_photos")]
+    partial class photos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,49 +143,6 @@ namespace Construx.App.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CompanyStatuses");
-                });
-
-            modelBuilder.Entity("Construx.App.Domain.Entities.ObjectType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ObjectTypes");
-                });
-
-            modelBuilder.Entity("Construx.App.Domain.Entities.Photo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ObjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ObjectTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ObjectTypeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Plan", b =>
@@ -709,25 +668,6 @@ namespace Construx.App.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Construx.App.Domain.Entities.Photo", b =>
-                {
-                    b.HasOne("Construx.App.Domain.Entities.ObjectType", "ObjectType")
-                        .WithMany("Photos")
-                        .HasForeignKey("ObjectTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Construx.App.Domain.Identity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ObjectType");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Construx.App.Domain.Entities.Plan", b =>
                 {
                     b.HasOne("Construx.App.Domain.Identity.User", "User")
@@ -903,11 +843,6 @@ namespace Construx.App.Migrations
             modelBuilder.Entity("Construx.App.Domain.Entities.CompanyStatus", b =>
                 {
                     b.Navigation("Companies");
-                });
-
-            modelBuilder.Entity("Construx.App.Domain.Entities.ObjectType", b =>
-                {
-                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("Construx.App.Domain.Entities.Plan", b =>

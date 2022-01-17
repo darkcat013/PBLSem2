@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Identity;
 using Construx.App.Interfaces;
 using Mapster;
 using Construx.App.Dtos.Representative;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Construx.App.Controllers
 {
@@ -22,17 +26,20 @@ namespace Construx.App.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IRepresentativeRepository _representativeRepository;
+        private readonly IPhotoRepository _photoRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public RepresentativesController(ApplicationDbContext context, IRepresentativeRepository representativeRepository, UserManager<User> userManager)
+        public RepresentativesController(ApplicationDbContext context, IRepresentativeRepository representativeRepository, UserManager<User> userManager, IPhotoRepository photoRepository, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _representativeRepository = representativeRepository;
             _userManager = userManager;
+            _photoRepository = photoRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [Authorize(Roles = UserRoles.Admin)]
-        // GET: Representatives
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Representatives.Include(r => r.Company).Include(r => r.User);
@@ -40,13 +47,10 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.Admin)]
-        // GET: Representatives/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            IEnumerable<Photo> photos = new List<Photo>(await _photoRepository.GetPhotosByRepresentativeId(id));
+            ViewBag.photos = photos;
 
             var representative = await _context.Representatives
                 .Include(r => r.Company)
@@ -59,8 +63,8 @@ namespace Construx.App.Controllers
 
             return View(representative);
         }
+
         [Authorize(Roles = UserRoles.Representative)]
-        // GET: Representatives/Create
         public async Task<IActionResult> Create()
         {
             var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -73,17 +77,43 @@ namespace Construx.App.Controllers
             representative = currUser.Representative;
             return View();
         }
+
+        public async Task CreateAndUploadPhoto(string folder, IFormFile file, int objectTypeId, int userId, int objectId)
+        {
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            string filename = "/uploaded/" + folder + "/" + Path.GetFileNameWithoutExtension(file.FileName) + DateTime.Now.Ticks + Path.GetExtension(file.FileName);
+            string path = wwwRootPath + filename;
+
+            var photo = new Photo
+            {
+                Name = filename,
+                ObjectTypeId = objectTypeId,
+                ObjectId = objectId,
+                UserId = userId
+            };
+
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            _photoRepository.Add(photo);
+            await _photoRepository.SaveChangesAsync();
+        }
+
         [Authorize(Roles = UserRoles.Representative)]
         // POST: Representatives/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDNP,JobTitle,CompanyExists")] CreateRepresentativeDto createRepresentativeDto)
+        public async Task<IActionResult> Create([Bind("IDNP,JobTitle,CompanyExists")] CreateRepresentativeDto createRepresentativeDto, IFormFile fileIdProof, IFormFile fileWorkProof)
         {
             var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
             var representative = await _representativeRepository.GetByUserId(currUser.Id);
-            
+
+            await CreateAndUploadPhoto(ObjectTypes.Representative, fileIdProof, (int)ObjectTypesIds.Representative, currUser.Id, representative.Id);
+            await CreateAndUploadPhoto(ObjectTypes.Representative, fileWorkProof, (int)ObjectTypesIds.Representative, currUser.Id, representative.Id);
+
             if (ModelState.IsValid)
             {
                 representative.IDNP = createRepresentativeDto.IDNP;
@@ -103,7 +133,6 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.Representative)]
-        // GET: Representatives/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -119,6 +148,7 @@ namespace Construx.App.Controllers
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", representative.CompanyId);
             return View(representative);
         }
+
         [Authorize(Roles = UserRoles.Representative)]
         // POST: Representatives/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -158,7 +188,6 @@ namespace Construx.App.Controllers
         }
 
         [Authorize(Roles = UserRoles.Admin)]
-        // GET: Representatives/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

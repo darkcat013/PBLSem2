@@ -16,7 +16,7 @@ namespace Construx.App.Extensions
     {
         public static async Task SeedData(this IHost host)
         {
-            using(var scope = host.Services.CreateScope())
+            using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 try
@@ -39,7 +39,7 @@ namespace Construx.App.Extensions
                     await RepresentativesSeed.Seed(dbContext);
                     await PlansSeed.Seed(dbContext);
                     await PlanPartsSeed.Seed(dbContext);
-
+                    await ObjectTypesSeed.Seed(dbContext);
                 }
                 catch (Exception ex)
                 {
