@@ -5,7 +5,7 @@
     {
         public const string Company = "Company";
         public const string Review = "Review";
-        public const string Plan = "Plan";
+        public const string PlanPart = "PlanPart";
         public const string Representative = "Representative";
     }
 
@@ -13,7 +13,7 @@
     {
         Company = 1,
         Review = 2,
-        Plan = 3,
-        Representative = 4
+        PlanPart = 3,
+        Representative = 4,
     }
 }

@@ -9,38 +9,38 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Company)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Service)
             </th>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Note)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DateCreated)
             </th>
-            <th></th>
+            <th class="th-alt"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Company.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Service.Name)
                 </td>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Note)
                 </td>
                 <td>
                     @Html.Raw(item.DateCreated.ToString("dd/MM/yyyy"))
                 </td>
-                <td>
+                <td class="td-alt d-flex justify-content-around" >
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>

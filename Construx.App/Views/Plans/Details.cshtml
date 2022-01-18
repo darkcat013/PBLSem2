@@ -4,8 +4,6 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
 <div>
     <h4>Plan</h4>
     <hr />
@@ -26,30 +24,30 @@
     <hr />
     <h4>Plan Parts</h4>
     <p>
-        <a asp-route-planid = "@Model.Id" asp-controller = "PlanParts" asp-action="Create">Create New</a>
+        <a asp-route-planid="@Model.Id" asp-controller="PlanParts" asp-action="Create">Create New</a>
     </p>
     <table class="table">
         <thead>
             <tr>
-                <th>
+                <th class="th-alt">
                     Name
                 </th>
                 <th>
                     Description
                 </th>
-                <th>
+                <th class="th-alt">
                     FromDate
                 </th>
                 <th>
                     ToDate
                 </th>
-                <th>
+                <th class="th-alt">
                     Status
                 </th>
                 <th>
                     Service
                 </th>
-                <th>
+                <th class="th-alt">
                     Priority
                 </th>
                 <th></th>
@@ -59,28 +57,56 @@
             @foreach (var item in ViewBag.PlanParts)
             {
                 <tr>
-                    <td>
+                    <td class="td-alt">
                         @item.Name
                     </td>
                     <td>
                         @item.Description
                     </td>
-                    <td>
-                        @item.FromDate.ToString("dd-MM-yyyy")
+                    <td class="td-alt">
+                        @if (item.ToDate <= DateTime.Now.Date)
+                        {
+                            <span class="red">@item.FromDate.ToString("dd-MM-yyyy")</span>
+                        }
+                        else
+                        {
+                            <span class="green">@item.FromDate.ToString("dd-MM-yyyy")</span>
+                        }
                     </td>
                     <td>
-                        @item.ToDate.ToString("dd-MM-yyyy")
+
+                        @if (item.ToDate <= DateTime.Now.Date)
+                        {
+                            <span class="red">@item.ToDate.ToString("dd-MM-yyyy")</span>
+                        }
+                        else
+                        {
+                            <span class="green">@item.ToDate.ToString("dd-MM-yyyy")</span>
+                        }
                     </td>
-                    <td>
+                    <td class="td-alt">
+                        
                         @item.Status.Name
                     </td>
                     <td>
-                        @item.Service?.Name
+                        <a asp-controller="Services" asp-action="Details" asp-route-id="@item.Service?.Id">@item.Service?.Name</a>
+                        
                     </td>
-                    <td>
-                        @item.Priority
+                    <td class="td-alt">
+                        @switch (item.Priority)
+                        {
+                            case 1:
+                                <span class="green">@item.Priority</span>
+                                break;
+                            case 2:
+                                <span class="orange">@item.Priority</span>
+                                break;
+                            case 3:
+                                <span class="red">@item.Priority</span>
+                                break;
+                        }
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <a asp-controller="PlanParts" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                         <a asp-controller="PlanParts" asp-action="Details" asp-route-id="@item.Id">Details</a> |
                         <a asp-controller="PlanParts" asp-action="Delete" asp-route-id="@item.Id">Delete</a>

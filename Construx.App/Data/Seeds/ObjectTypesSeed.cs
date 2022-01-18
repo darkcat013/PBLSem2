@@ -26,7 +26,7 @@ namespace Construx.App.Data.Seeds
                     },
                     new ObjectType
                     {
-                        Name = "Plan"
+                        Name = "PlanPart"
                     },
                     new ObjectType
                     {

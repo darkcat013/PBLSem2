@@ -6,6 +6,19 @@ for details on configuring this project to bundle and minify static web assets. 
     color: white !important;
 }
 
+ th  {
+    background-color: #CBDCE0;
+    
+}
+
+.th-alt {
+    background-color: #BDCDD1;
+}
+
+.td-alt {
+    background-color: #EEEEEE;
+}
+
 body {
     font-family: 'Comfortaa', sans-serif;
 }
@@ -15,9 +28,14 @@ body {
 a {
     color: #578e9c !important;
 }
-
+.red {
+    color: red;
+}
 .green {
     color: #5ea900;
+}
+.orange {
+    color: darkorange;
 }
 .btn-primary {
     background-color: #578e9c !important;

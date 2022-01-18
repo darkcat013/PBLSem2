@@ -12,6 +12,6 @@ namespace Construx.App.Interfaces
 
         public Task<List<Photo>> GetPhotosByReviewId(int reviewId);
 
-        public Task<List<Photo>> GetPhotosByPlanId(int planId);
+        public Task<List<Photo>> GetPhotosByPlanPartId(int ppId);
     }
 }

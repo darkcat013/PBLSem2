@@ -216,14 +216,18 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
-            var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
-            var currPhoto = await _photoRepository.GetPhotoByCompanyId(id);
-            if (currPhoto.Any())
-            {
-                await DeletePhoto(currPhoto[0].Id);
-            }
 
-            await CreateAndUploadPhoto(ObjectTypes.Company, file, (int)ObjectTypesIds.Company, currUser.Id, id);
+            if (file != null)
+            {
+                var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                var currPhoto = await _photoRepository.GetPhotoByCompanyId(id);
+                if (currPhoto.Any())
+                {
+                    await DeletePhoto(currPhoto[0].Id);
+                }
+
+                await CreateAndUploadPhoto(ObjectTypes.Company, file, (int)ObjectTypesIds.Company, currUser.Id, id);
+            }
 
             if (ModelState.IsValid)
             {

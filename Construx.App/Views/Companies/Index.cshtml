@@ -3,7 +3,7 @@
 
 @{ ViewData["Title"] = "Index"; }
 
-<h4>Companies</h4>
+
 <div class="container mb-5">
     <!--for searching-->
     <div class="row justify-content-sm-center align-items-center">
@@ -56,56 +56,57 @@
         <a asp-action="Create">Create New</a>
     </p>
 }
-<table class="table">
+<table class="table mt-3">
     <thead>
-        <tr>
-            <th>
+        <tr class="">
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th colspan="3">
                 @Html.DisplayNameFor(model => model.City)
             </th>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Phone)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Rating)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td colspan="3">
                     @Html.DisplayFor(modelItem => item.City.Name)
                 </td>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Phone)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Status.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Rating)/5
+                <td class="td-alt">
+                    <span class="green">@Html.DisplayFor(modelItem => item.Rating)/5</span>
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>

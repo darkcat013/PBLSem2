@@ -29,9 +29,9 @@ namespace Construx.App.Repositories
             return await photo.ToListAsync();
         }
 
-        public async Task<List<Photo>> GetPhotosByPlanId(int planId)
+        public async Task<List<Photo>> GetPhotosByPlanPartId(int ppId)
         {
-            var photos = _photos.Where(p => p.ObjectType.Name == ObjectTypes.Plan && p.ObjectId == planId);
+            var photos = _photos.Where(p => p.ObjectType.Name == ObjectTypes.PlanPart && p.ObjectId == ppId);
 
             return await photos.ToListAsync();
         }

@@ -9,13 +9,13 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Service)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Rating)
             </th>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th></th>
@@ -25,16 +25,16 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Service.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Rating)
                 </td>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
-                <td>
+                <td class="d-flex justify-content-around">
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>

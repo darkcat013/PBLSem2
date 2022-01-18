@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-<h4>Services</h4>
+
 <div class="container mb-5">
     <!--for searching-->
     <div class="row d-flex justify-content-sm-center align-items-center">
@@ -16,8 +16,8 @@
     </div>
 </div>
 
-<div class="row d-flex justify-content-start align-items-center">
-    <div class="dropdown col-2 px-0">
+<div class="row">
+    <div class="dropdown col-3">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Select category
         </button>
@@ -30,7 +30,10 @@
             }
         </div>
     </div>
+    <div class="col-5"></div>
+    <div class="col-4 d-flex justify-content-end align-items-center"><a asp-action="Index" class=""> Get All Services</a></div>
 </div>
+
 
 @if (User.IsInRole(UserRoles.Admin))
 {
@@ -38,20 +41,23 @@
         <a asp-action="Create">Create New</a>
     </p>
 }
-<table class="table">
+<table class="table mt-3">
     <thead>
         <tr>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Company)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Category)
             </th>
-            <th>
+            <th class="th-alt">
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th class="th-alt">
+                @Html.DisplayNameFor(model => model.Rating)
             </th>
             <th></th>
         </tr>
@@ -59,20 +65,23 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
+            <tr class="">
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Company.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Category.Name)
                 </td>
-                <td>
+                <td class="td-alt">
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
-                <td>
+                <td class="td-alt">
+                    <span class="green">@Html.DisplayFor(modelItem => item.Rating)/5</span>
+                </td>
+                <td >
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(item.Company.Representative?.User.UserName)))
                     {

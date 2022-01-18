@@ -5,13 +5,11 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
 <div>
     <h4>Service</h4>
     @if (!ViewBag.HasBookmark)
     {
-        <a class="btn btn-secondary d-inline-block" asp-action="BookmarkService" asp-route-id="@Model.Id">Bookmark</a>
+        <a class="btn btn-secondary d-inline-block white-text" asp-action="BookmarkService" asp-route-id="@Model.Id">Bookmark</a>
     }
     <hr />
     <dl class="row">
@@ -41,33 +39,40 @@
         </dd>
     </dl>
 </div>
-<div>
-    @if (User.IsInRole(UserRoles.User))
-    {
-        <hr />
-        <h5>Add to plan</h5>
-        <form method="post" asp-action="AddToPlan" class="input-group d-flex flex-column">
-            <div class="form-group">
-                <label class="control-label">Select plan</label>
-                <select class="form-control" asp-items="@ViewBag.Plans" name="plan"></select>
-            </div>
-            <input type="hidden" value="@Model.Id" name="serviceid" />
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Add to my plan">
-            </div>
-        </form>
-        <br />
-    }
-    @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(Model.Company.Representative?.User.UserName)))
-    {
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Company & Add Services</a>
-    }
-    <hr />
-    @if (!ViewBag.HasReview)
-    {
-        <h4>Add a review:</h4>
-        <div class="row">
-            <div class="col-md-4">
+<hr />
+<div class="row">
+
+    <div class="col-6">
+        @if (User.IsInRole(UserRoles.User))
+        {
+
+            <h5>Add to plan</h5>
+            <form method="post" asp-action="AddToPlan" class="input-group d-flex flex-column">
+                <div class="form-group">
+                    <label class="control-label">Select plan</label>
+                    <select class="form-control" asp-items="@ViewBag.Plans" name="plan"></select>
+                </div>
+                <input type="hidden" value="@Model.Id" name="serviceid" />
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Add to my plan">
+                </div>
+            </form>
+            <br />
+        }
+        @if (User.IsInRole(UserRoles.Admin) || (User.IsInRole(UserRoles.Representative) && User.Identity.Name.Equals(Model.Company.Representative?.User.UserName)))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Company & Add Services</a>
+        }
+
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    <div class="col-6">
+        @if (!ViewBag.HasReview)
+        {
+            <h5>Add a review:</h5>
+
+            <div class="">
                 <form asp-action="AddReview">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" value="@Model.Id" name="serviceId" />
@@ -85,9 +90,7 @@
                     </div>
                 </form>
             </div>
-        </div>
-
-    }
-
-    <a asp-action="Index">Back to List</a>
+        }
+    </div>
 </div>
+<hr />
