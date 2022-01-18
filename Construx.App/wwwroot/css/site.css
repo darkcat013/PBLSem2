@@ -6,6 +6,11 @@ for details on configuring this project to bundle and minify static web assets. 
     color: white !important;
 }
 
+.aqua {
+    color: #578E9C;
+    font-weight:bold;
+}
+
  th  {
     background-color: #CBDCE0;
     
@@ -32,7 +37,7 @@ a {
     color: red;
 }
 .green {
-    color: #5ea900;
+    color: #5EA900;
 }
 .orange {
     color: darkorange;

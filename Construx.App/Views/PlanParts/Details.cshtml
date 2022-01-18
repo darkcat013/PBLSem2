@@ -52,14 +52,14 @@
     </div>
 </div>
 
-<div class="alert alert-info"> Delete photos by clicking on them.</div>
+<div class="alert alert-info">Click on the image to view full or delete.</div>
 
 <div class="bg-gray rounded-lg d-flex flex-wrap w-100">
     @if (ViewBag.HasPhotos)
     {
         @foreach (var photo in ViewBag.photos)
         {
-            <a asp-controller="Photos" asp-action="Delete" asp-route-id="@photo.Id"><img src="@photo.Name" class="shadow-sm p-2" style="max-width:400px; max-height:400px;"/></a>
+            <a asp-controller="Photos" asp-action="Delete" asp-route-id="@photo.Id"><img src="@photo.Name" class="shadow-sm p-2" style="width:370px; height:370px; object-fit:cover;"/></a>
 
         }
     }
