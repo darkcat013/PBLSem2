@@ -7,9 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Construx.App.Data;
 using Construx.App.Domain.Entities;
-using Construx.App.Interfaces;
-using Construx.App.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Construx.App.Constants;
+using Construx.App.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Construx.App.Domain.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Construx.App.Controllers
 {
@@ -19,13 +24,19 @@ namespace Construx.App.Controllers
         private readonly IPlanRepository _planRepository;
         private readonly IServiceRepository _serviceRepository;
         private readonly IPlanPartRepository _planPartRepository;
+        private readonly IPhotoRepository _photoRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<User> _userManager;
 
-        public PlanPartsController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, IServiceRepository serviceRepository)
+        public PlanPartsController(ApplicationDbContext context, IPlanRepository planRepository, IPlanPartRepository planPartRepository, IServiceRepository serviceRepository, IPhotoRepository photoRepository, IWebHostEnvironment webHostEnvironment, UserManager<User> userManager)
         {
             _context = context;
             _planRepository = planRepository;
             _planPartRepository = planPartRepository;
             _serviceRepository = serviceRepository;
+            _photoRepository = photoRepository;
+            _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
         }
 
         [Authorize(Roles = UserRoles.User)]
@@ -35,6 +46,10 @@ namespace Construx.App.Controllers
             {
                 return NotFound();
             }
+            ICollection<Photo> photos = new List<Photo>(await _photoRepository.GetPhotosByPlanPartId(id.Value));
+
+            ViewBag.HasPhotos = photos.Any();
+            ViewBag.photos = photos;
 
             var planPart = await _context.PlanParts
                 .Include(p => p.Plan)
@@ -133,11 +148,18 @@ namespace Construx.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRoles.User)]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,FromDate,ToDate,StatusId,PlanId,ServiceId,Priority,Id")] PlanPart planPart)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,FromDate,ToDate,StatusId,PlanId,ServiceId,Priority,Id")] PlanPart planPart, IFormFile file)
         {
             if (id != planPart.Id)
             {
                 return NotFound();
+            }
+
+            if (file != null)
+            {
+                var currUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+                await CreateAndUploadPhoto(ObjectTypes.PlanPart, file, (int)ObjectTypesIds.PlanPart, currUser.Id, id);
             }
 
             if (ModelState.IsValid)
@@ -216,6 +238,28 @@ namespace Construx.App.Controllers
                 return LocalRedirect($"~/PlanParts/Details/{planPartId}");
             }
             return LocalRedirect($"~/Services/Details/{serviceId}");
+        }
+
+        public async Task CreateAndUploadPhoto(string folder, IFormFile file, int objectTypeId, int userId, int objectId)
+        {
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            string filename = "/uploaded/" + folder + "/" + Path.GetFileNameWithoutExtension(file.FileName) + DateTime.Now.Ticks + Path.GetExtension(file.FileName);
+            string path = wwwRootPath + filename;
+
+            var photo = new Photo
+            {
+                Name = filename,
+                ObjectTypeId = objectTypeId,
+                ObjectId = objectId,
+                UserId = userId
+            };
+
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            _photoRepository.Add(photo);
+            await _photoRepository.SaveChangesAsync();
         }
     }
 }

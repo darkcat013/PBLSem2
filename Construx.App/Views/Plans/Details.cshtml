@@ -23,6 +23,7 @@
     </dl>
     <hr />
     <h4>Plan Parts</h4>
+    <div class="alert alert-info"> Upload photos to parts by clicking Edit.</div>
     <p>
         <a asp-route-planid="@Model.Id" asp-controller="PlanParts" asp-action="Create">Create New</a>
     </p>
@@ -85,12 +86,11 @@
                         }
                     </td>
                     <td class="td-alt">
-                        
+
                         @item.Status.Name
                     </td>
                     <td>
                         <a asp-controller="Services" asp-action="Details" asp-route-id="@item.Service?.Id">@item.Service?.Name</a>
-                        
                     </td>
                     <td class="td-alt">
                         @switch (item.Priority)

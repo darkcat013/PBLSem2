@@ -46,6 +46,7 @@ namespace Construx.App.Controllers
         }
 
         // GET: Photos/Details/5
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -99,7 +100,7 @@ namespace Construx.App.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await DeletePhoto(id);
-            return RedirectToAction(nameof(Index));
+            return LocalRedirect("~/Plans/");
         }
 
         private bool PhotoExists(int id)

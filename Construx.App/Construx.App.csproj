@@ -25,7 +25,7 @@
     <Folder Include="MapsterRegisters\" />
     <Folder Include="wwwroot\uploaded\icons\NewFolder\" />
     <Folder Include="wwwroot\uploaded\Company\" />
-    <Folder Include="wwwroot\uploaded\Plan\" />
+    <Folder Include="wwwroot\uploaded\PlanPart\" />
     <Folder Include="wwwroot\uploaded\Review\" />
     <Folder Include="wwwroot\uploaded\Representative\" />
   </ItemGroup>
